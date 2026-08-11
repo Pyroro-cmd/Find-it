@@ -1,0 +1,97 @@
+name: Collecte quotidienne
+
+on:
+  schedule:
+    # GitHub Actions ne connaît que l'UTC et ignore le changement d'heure.
+    # 8 h à Paris = 06:00 UTC en été (CEST) et 07:00 UTC en hiver (CET).
+    # On déclenche donc aux deux heures, et l'étape « Vérifier l'heure locale »
+    # ci-dessous annule l'exécution qui ne tombe pas à 8 h heure de Paris.
+    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      debug_dump:
+        description: 'Archiver le HTML des pages (calibration des sélecteurs)'
+        type: boolean
+        default: false
+      enable_facebook:
+        description: 'Inclure Facebook Marketplace (nécessite une session)'
+        type: boolean
+        default: false
+
+# Deux collectes simultanées se marcheraient dessus en base.
+concurrency:
+  group: findit-scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Vérifier l'heure locale
+        id: gate
+        run: |
+          HEURE_PARIS=$(TZ=Europe/Paris date +%H)
+          echo "Il est ${HEURE_PARIS} h à Paris."
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$HEURE_PARIS" != "08" ]; then
+            echo "Ce déclenchement ne correspond pas à 8 h heure de Paris — on s'arrête."
+            echo "continuer=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "continuer=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.continuer == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.continuer == 'true'
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+
+      - name: Installer les dépendances
+        if: steps.gate.outputs.continuer == 'true'
+        working-directory: scraper
+        run: npm ci
+
+      - name: Installer Chromium
+        if: steps.gate.outputs.continuer == 'true'
+        working-directory: scraper
+        run: npx playwright install --with-deps chromium
+
+      - name: Vérifier les types
+        if: steps.gate.outputs.continuer == 'true'
+        working-directory: scraper
+        run: npm run typecheck
+
+      - name: Lancer les tests
+        if: steps.gate.outputs.continuer == 'true'
+        working-directory: scraper
+        run: npm test
+
+      - name: Collecter
+        if: steps.gate.outputs.continuer == 'true'
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FB_STORAGE_STATE_JSON: ${{ secrets.FB_STORAGE_STATE_JSON }}
+          FINDIT_TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
+          FINDIT_DEBUG_DUMP: ${{ inputs.debug_dump && '1' || '0' }}
+          FINDIT_ENABLE_FACEBOOK: ${{ inputs.enable_facebook && '1' || '0' }}
+          FINDIT_ARTIFACT_DIR: ${{ github.workspace }}/scraper/.artifacts
+        run: npm run scrape
+
+      - name: Publier les archives de debug
+        # `always()` : ces archives servent justement à comprendre les échecs.
+        if: always() && steps.gate.outputs.continuer == 'true' && inputs.debug_dump
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-collectees
+          path: scraper/.artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
