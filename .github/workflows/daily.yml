@@ -209,3 +209,20 @@ jobs:
           # L'historique du site n'a aucune valeur : seul l'état courant compte.
           git push -f origin HEAD:gh-pages
           echo "Site publié : https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
+      - name: Vérifier que le site répond
+        # Publier n'est pas servir : si GitHub Pages n'a jamais été activé sur
+        # le dépôt, la branche existe mais l'adresse renvoie 404. Le workflow
+        # n'a pas le droit d'activer Pages ; il peut au moins le dire.
+        run: |
+          URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          for tentative in 1 2 3 4 5 6; do
+            CODE=$(curl -s -o /dev/null -w '%{http_code}' -L "$URL" || echo 000)
+            echo "Tentative ${tentative} : HTTP ${CODE} sur ${URL}"
+            if [ "$CODE" = "200" ]; then
+              echo "::notice::Le site répond : ${URL}"
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::warning::${URL} ne répond pas encore. Si c'est la première publication, activez GitHub Pages : Settings → Pages → Source « Deploy from a branch » → branche « gh-pages » / dossier « / (root) »."

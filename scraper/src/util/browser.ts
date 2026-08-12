@@ -174,6 +174,9 @@ export async function describeForms(page: Page, label: string): Promise<void> {
         champs: Array.from(form.querySelectorAll('input, select')).map((el) => {
           const name = el.getAttribute('name') ?? el.getAttribute('id') ?? '?';
           const type = el.getAttribute('type') ?? el.tagName.toLowerCase();
+          // La valeur des champs cachés porte souvent la catégorie ou le jeton
+          // sans lesquels la recherche ne peut pas être rejouée en GET.
+          if (type === 'hidden') return `${name}(hidden = ${el.getAttribute('value') ?? ''})`;
           const options =
             el.tagName === 'SELECT'
               ? Array.from(el.querySelectorAll('option'))
