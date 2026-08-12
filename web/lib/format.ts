@@ -34,6 +34,7 @@ export function formatDateTime(iso: string | null): string {
 }
 
 const SOURCE_LABELS: Record<string, string> = {
+  yachtall: 'Yachtall',
   boat24: 'Boat24',
   theyachtmarket: 'TheYachtMarket',
   leboncoin: 'Leboncoin',

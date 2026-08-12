@@ -3,6 +3,7 @@ import { Boat24Source } from './sources/boat24.js';
 import { FacebookSource } from './sources/facebook.js';
 import { LeboncoinSource } from './sources/leboncoin.js';
 import { TheYachtMarketSource } from './sources/theyachtmarket.js';
+import { YachtallSource } from './sources/yachtall.js';
 import {
   keyOf,
   loadDataset,
@@ -37,6 +38,7 @@ async function main(): Promise<void> {
   // Ordre volontaire : les sources qui fournissent des caractéristiques
   // exactes d'abord, celles qui exigent de la déduction ensuite.
   const sources: Source[] = [
+    new YachtallSource(),
     new Boat24Source(),
     new TheYachtMarketSource(),
     new LeboncoinSource(),
