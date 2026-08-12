@@ -55,6 +55,14 @@ export default function DashboardPage() {
 
   const sources = useMemo(() => [...new Set(listings.map((l) => l.source))].sort(), [listings]);
 
+  const countries = useMemo(
+    () =>
+      [...new Set(listings.map((l) => l.country).filter((c): c is string => Boolean(c)))].sort(
+        (a, b) => a.localeCompare(b, 'fr'),
+      ),
+    [listings],
+  );
+
   const visible = useMemo(() => {
     let result = selectForTab(decorated, tab);
 
@@ -66,7 +74,7 @@ export default function DashboardPage() {
           (l.description ?? '').toLowerCase().includes(needle),
       );
     }
-    if (filters.facade) result = result.filter((l) => l.facade === filters.facade);
+    if (filters.country) result = result.filter((l) => l.country === filters.country);
     if (filters.source) result = result.filter((l) => l.source === filters.source);
     if (filters.maxPrice) {
       const max = Number(filters.maxPrice);
@@ -131,7 +139,12 @@ export default function DashboardPage() {
             </div>
 
             <div className="mb-6">
-              <Filters values={filters} sources={sources} onChange={setFilters} />
+              <Filters
+                values={filters}
+                sources={sources}
+                countries={countries}
+                onChange={setFilters}
+              />
             </div>
 
             {tab === 'a-verifier' && visible.length > 0 ? (

@@ -1,3 +1,19 @@
+/**
+ * Champs qu'une source connaît de façon certaine, sans avoir à les deviner.
+ *
+ * Leboncoin oblige à extraire la longueur du texte libre ; les sites
+ * spécialisés, eux, l'affichent dans un champ dédié (« 14,73 x 4,49 m »).
+ * Quand c'est le cas, il serait absurde de repasser par les regex : ces
+ * valeurs court-circuitent l'extraction et sont marquées comme fiables.
+ */
+export type KnownFields = {
+  lengthM?: number | null;
+  yearBuilt?: number | null;
+  boatKind?: 'voilier' | 'moteur' | 'autre' | null;
+  hullType?: 'monocoque' | 'catamaran' | 'trimaran' | null;
+  country?: string | null;
+};
+
 /** Ce qu'une source sait produire, avant tout enrichissement. */
 export type RawListing = {
   source: string;
@@ -11,6 +27,7 @@ export type RawListing = {
   images: string[];
   publishedAt: string | null;
   sellerType: 'pro' | 'particulier' | null;
+  known?: KnownFields;
   /** Charge utile d'origine, conservée pour pouvoir ré-enrichir sans re-scraper. */
   raw: Record<string, unknown>;
 };
@@ -19,8 +36,9 @@ export type RawListing = {
 export type EnrichedListing = RawListing & {
   department: string | null;
   facade: string | null;
+  country: string | null;
   lengthM: number | null;
-  /** 'explicit_m' | 'feet' | 'model_db' | 'model_heuristic' | 'llm' */
+  /** 'source_field' | 'explicit_m' | 'feet' | 'model_db' | 'model_heuristic' | 'llm' */
   lengthSource: string | null;
   lengthConfidence: number | null;
   hullType: string | null;

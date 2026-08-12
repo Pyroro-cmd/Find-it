@@ -34,10 +34,10 @@ export function formatDateTime(iso: string | null): string {
 }
 
 const SOURCE_LABELS: Record<string, string> = {
+  boat24: 'Boat24',
+  theyachtmarket: 'TheYachtMarket',
   leboncoin: 'Leboncoin',
   facebook: 'Facebook',
-  youboat: 'Youboat',
-  'bateaux-occasion': 'Bateaux-Occasion',
 };
 
 export function sourceLabel(source: string): string {
@@ -57,6 +57,7 @@ export function confidenceLabel(value: number | null): string {
 }
 
 const LENGTH_SOURCE_LABELS: Record<string, string> = {
+  source_field: 'annoncée par le site',
   explicit_m: 'annoncée en mètres',
   feet: 'annoncée en pieds',
   model_db: 'déduite du modèle',

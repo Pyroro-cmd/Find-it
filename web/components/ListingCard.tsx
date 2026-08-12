@@ -81,6 +81,11 @@ export function ListingCard({
           <div>
             {[
               listing.locationLabel,
+              // Le pays n'est répété que s'il ne figure pas déjà dans le lieu :
+              // « La Rochelle, France · France » n'apprend rien.
+              listing.country && !(listing.locationLabel ?? '').includes(listing.country)
+                ? listing.country
+                : null,
               facadeLabel(listing.facade),
               listing.yearBuilt ? String(listing.yearBuilt) : null,
               listing.hullType,

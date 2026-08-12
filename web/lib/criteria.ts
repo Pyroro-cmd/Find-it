@@ -17,7 +17,7 @@ export const DEFAULT_CRITERIA: Criteria = {
   minYearBuilt: null,
   maxYearBuilt: null,
   allowedHullTypes: ['monocoque', 'catamaran', 'trimaran'],
-  allowedFacades: null,
+  allowedCountries: null,
   excludeProjects: true,
   excludeProSellers: false,
   includeUnknownLength: true,
@@ -77,10 +77,13 @@ export function decorate(
 
   const hullOk = listing.hullType == null || criteria.allowedHullTypes.includes(listing.hullType);
 
-  const facadeOk =
-    criteria.allowedFacades == null ||
-    criteria.allowedFacades.length === 0 ||
-    (listing.facade != null && criteria.allowedFacades.includes(listing.facade));
+  // Une annonce dont le pays est inconnu n'est jamais écartée : mieux vaut une
+  // annonce à situer qu'une annonce perdue.
+  const countryOk =
+    criteria.allowedCountries == null ||
+    criteria.allowedCountries.length === 0 ||
+    listing.country == null ||
+    criteria.allowedCountries.includes(listing.country);
 
   const projectOk = !criteria.excludeProjects || !listing.isProject;
   const sellerOk = !criteria.excludeProSellers || listing.sellerType !== 'pro';
@@ -95,7 +98,7 @@ export function decorate(
     priceOk &&
     lengthOk &&
     hullOk &&
-    facadeOk &&
+    countryOk &&
     projectOk &&
     sellerOk &&
     yearOk;

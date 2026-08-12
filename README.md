@@ -87,8 +87,10 @@ favoris, sans vous gêner.
 
 ## Ce que ça fait, concrètement
 
-- **Collecte** chaque matin sur Leboncoin et deux sites spécialisés
-  (Facebook en option, voir plus bas).
+- **Collecte** chaque matin sur [boat24.com](https://www.boat24.com/fr/voiliers/)
+  et [theyachtmarket.com](https://www.theyachtmarket.com/fr/) — voir
+  « Les sources » plus bas pour ce qui a été mesuré, et pourquoi Leboncoin n'y
+  figure pas.
 - **Accumule au lieu d'effacer.** L'historique permet de repérer les nouveautés
   du jour, de détecter les **baisses de prix** (un vendeur qui baisse est un
   vendeur motivé) et de voir quelles annonces ont disparu.
@@ -149,8 +151,8 @@ Le dépôt est public, donc le site l'est aussi : **quiconque a l'adresse voit
 les annonces**. C'est le choix retenu pour pouvoir partager le lien simplement.
 
 Concrètement, ce qui est visible : des annonces de bateaux déjà publiques sur
-Leboncoin. Ce qui ne l'est pas : vos favoris et vos critères, qui ne quittent
-jamais votre navigateur.
+les sites d'origine. Ce qui ne l'est pas : vos favoris et vos critères, qui ne
+quittent jamais votre navigateur.
 
 Si vous voulez restreindre l'accès plus tard, il faudra soit passer le dépôt en
 privé (GitHub Pages devient alors payant), soit ajouter une page de
@@ -158,37 +160,50 @@ déverrouillage chiffrant l'accès aux données.
 
 ---
 
-## Calibration au premier lancement
+## Les sources — ce qui a été mesuré
 
-Le code des collecteurs a été écrit **sans accès réseau aux sites cibles** :
-l'environnement de développement bloquait `leboncoin.fr` et les sites
-spécialisés. C'est une limite réelle et il faut en tenir compte.
+Les sites n'étant pas joignables depuis l'environnement de développement, un
+banc d'essai (`scraper/src/probe.ts`, exécuté par le workflow `probe.yml`) est
+allé les interroger **depuis GitHub Actions** avant d'écrire une seule ligne de
+parseur. Les constats ci-dessous sont donc des relevés, pas des suppositions.
 
-Les conséquences ont été anticipées :
+| Site | Résultat du sondage | Statut |
+|---|---|---|
+| **boat24.com** | > 4 000 voiliers, en français, dimensions / année / pays / prix lisibles dans la carte | **source principale** |
+| **theyachtmarket.com** | aperçu `2002 \| 51'7" \| Diesel \| Voile` : année, longueur et type explicites | **seconde source** |
+| **leboncoin.fr** | HTTP 403 en `fetch` **et** en Chromium piloté | **désactivé** |
+| **Facebook Marketplace** | même barrage, plus le risque de perdre le compte | **désactivé** |
 
-- **Leboncoin** est extrait par la *forme* des données (objets contenant
-  `list_id` + `subject`), et non par un chemin figé du type
-  `props.pageProps.searchData.ads`. La position bouge à chaque refonte du site ;
-  la forme des objets, beaucoup moins. Deux voies tournent en parallèle
-  (interception de l'API interne + état Next.js embarqué) et sont fusionnées.
-- **Sites spécialisés** : d'abord le JSON-LD schema.org (format normalisé que
-  la plupart des sites d'annonces émettent pour le référencement), puis une
-  cascade de sélecteurs CSS candidats.
+### Pourquoi Leboncoin n'y est pas
 
-**Marche à suivre :** lancez le workflow à la main en cochant « Archiver le
-HTML ». Récupérez l'artefact `pages-collectees` et comparez ce que le site
-renvoie réellement à ce qu'attendent les parseurs.
+Le blocage n'est pas un défaut de parseur : DataDome, l'anti-bot du site,
+**refuse les plages d'adresses de centres de données** — celles d'où tournent
+les runners GitHub. La page ne s'ouvre jamais, quelle que soit la finesse du
+code.
 
-| Symptôme | Où regarder |
-|---|---|
-| 0 annonce Leboncoin, artefact « blocked » ou « challenge » | Anti-bot déclenché — espacer les requêtes, réduire `LBC_MAX_PAGES` |
-| 0 annonce Leboncoin, page normale | `looksLikeAd()` dans `scraper/src/sources/leboncoin.ts` |
-| Mauvaise catégorie de résultats | Variable `LBC_CATEGORY` (Nautisme = 50 à ce jour) |
-| 0 annonce sur un site spécialisé | `SITES[].selectors` dans `scraper/src/sources/specialized.ts` |
+Deux façons de le contourner, aucune gratuite et sans risque :
 
-Un garde-fou important : **si aucune annonce n'est collectée, le fichier
-existant n'est pas écrasé.** Une panne de source ne peut pas effacer des
-semaines d'historique.
+1. un **proxy résidentiel** (quelques euros par mois) — sortirait du cahier des
+   charges « zéro frais » ;
+2. lancer la collecte **depuis votre propre machine**, sur votre connexion :
+   `FINDIT_ENABLE_LEBONCOIN=1 npm run scrape` dans `scraper/`, puis commiter le
+   fichier de données produit. C'est gratuit, et ça marche depuis une IP
+   résidentielle.
+
+Conséquence à connaître : les annonces affichées sont **européennes**, pas
+strictement françaises — d'où le filtre par pays sur le site. Ces deux sites
+publient surtout des annonces de courtiers, mieux documentées que celles de
+Leboncoin, mais un peu plus chères.
+
+### Ce qui protège l'historique
+
+**Si aucune annonce n'est collectée, le fichier existant n'est pas écrasé**, et
+une source injoignable ne fait pas passer tout son catalogue en « disparu ».
+Une panne ne peut donc pas effacer des semaines d'historique.
+
+Pour inspecter ce que renvoient réellement les sites : lancez le workflow à la
+main en cochant « Archiver le HTML », puis récupérez l'artefact
+`pages-collectees`.
 
 ---
 
@@ -212,7 +227,7 @@ expose ce compte à une suspension**. Si vous l'activez :
 cd scraper
 npm install
 npx playwright install chromium
-npm test              # 23 tests, aucun réseau requis
+npm test              # 41 tests, aucun réseau requis
 npm run typecheck
 npm run scrape        # collecte réelle, écrit le fichier de données
 
@@ -223,9 +238,11 @@ npm run dev           # http://localhost:3000
 ```
 
 Les tests couvrent le cœur du produit — extraction de longueur, pièges des
-mesures parasites, détection des épaves, scoring, et la fusion de l'historique
-(dates de première apparition préservées, baisses de prix, annonces disparues,
-non-écrasement quand une source tombe). Ils tournent avant chaque collecte.
+mesures parasites, détection des épaves, scoring, lecture des cartes des deux
+sites (sur des textes **réellement capturés** par le sondage, pas inventés), et
+la fusion de l'historique (dates de première apparition préservées, baisses de
+prix, annonces disparues, non-écrasement quand une source tombe). Ils tournent
+avant chaque collecte.
 
 ---
 
@@ -235,12 +252,15 @@ Surchargeables par variable d'environnement, sans toucher au code :
 
 | Variable | Défaut | Effet |
 |---|---|---|
-| `LBC_QUERIES` | `voilier,sailboat,ketch,sloop` | Recherches lancées sur Leboncoin |
-| `LBC_MAX_PAGES` | `5` | Pages parcourues par recherche |
-| `LBC_MAX_PRICE` | `25000` | Plafond envoyé au moteur de recherche |
-| `LBC_CATEGORY` | `50` | Catégorie Nautisme |
-| `FINDIT_DISABLE_LEBONCOIN` | — | `1` coupe la source |
-| `FINDIT_DISABLE_SPECIALIZED` | — | `1` coupe la source |
+| `B24_MAX_PAGES` | `12` | Pages parcourues sur boat24 |
+| `B24_MAX_PRICE` | `30000` | Plafond appliqué à la collecte |
+| `B24_MIN_LENGTH` | `8` | Plancher de longueur, en mètres |
+| `TYM_MAX_PAGES` | `8` | Pages parcourues sur theyachtmarket |
+| `TYM_MAX_PRICE` | `30000` | Plafond envoyé au formulaire de recherche |
+| `TYM_MIN_LENGTH` | `8` | Plancher envoyé au formulaire de recherche |
+| `FINDIT_DISABLE_BOAT24` | — | `1` coupe la source |
+| `FINDIT_DISABLE_TYM` | — | `1` coupe la source |
+| `FINDIT_ENABLE_LEBONCOIN` | — | `1` réactive Leboncoin (utile en local seulement) |
 | `FINDIT_ENABLE_FACEBOOK` | — | `1` active Facebook |
 | `FINDIT_DEBUG_DUMP` | — | `1` archive le HTML des pages |
 

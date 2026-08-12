@@ -44,6 +44,7 @@ export type StoredListing = {
   locationLabel: string | null;
   department: string | null;
   facade: string | null;
+  country: string | null;
   lengthM: number | null;
   lengthSource: string | null;
   lengthConfidence: number | null;
@@ -165,6 +166,7 @@ export function mergeListings(
       locationLabel: listing.locationLabel,
       department: listing.department,
       facade: listing.facade,
+      country: listing.country,
       lengthM: listing.lengthM,
       lengthSource: listing.lengthSource,
       lengthConfidence: listing.lengthConfidence,

@@ -11,6 +11,7 @@ export type Listing = {
   locationLabel: string | null;
   department: string | null;
   facade: string | null;
+  country: string | null;
   lengthM: number | null;
   lengthSource: string | null;
   lengthConfidence: number | null;
@@ -59,7 +60,14 @@ export type Criteria = {
   minYearBuilt: number | null;
   maxYearBuilt: number | null;
   allowedHullTypes: string[];
-  allowedFacades: string[] | null;
+  /**
+   * Pays retenus. `null` (ou liste vide) = tous.
+   *
+   * Remplace l'ancien filtre par façade maritime : les sites effectivement
+   * joignables (boat24, theyachtmarket) annoncent un pays, pas un code postal
+   * français, donc « Atlantique / Méditerranée » n'était plus calculable.
+   */
+  allowedCountries: string[] | null;
   excludeProjects: boolean;
   excludeProSellers: boolean;
   includeUnknownLength: boolean;

@@ -1,7 +1,8 @@
 import { enrichAll, isPlausibleBoatListing } from './pipeline.js';
+import { Boat24Source } from './sources/boat24.js';
 import { FacebookSource } from './sources/facebook.js';
 import { LeboncoinSource } from './sources/leboncoin.js';
-import { SpecializedSitesSource } from './sources/specialized.js';
+import { TheYachtMarketSource } from './sources/theyachtmarket.js';
 import {
   keyOf,
   loadDataset,
@@ -33,9 +34,12 @@ async function main(): Promise<void> {
   const dataset = await loadDataset();
   console.log(`Historique chargé : ${dataset.listings.length} annonces connues\n`);
 
+  // Ordre volontaire : les sources qui fournissent des caractéristiques
+  // exactes d'abord, celles qui exigent de la déduction ensuite.
   const sources: Source[] = [
+    new Boat24Source(),
+    new TheYachtMarketSource(),
     new LeboncoinSource(),
-    new SpecializedSitesSource(),
     new FacebookSource(),
   ];
 
@@ -110,8 +114,8 @@ async function main(): Promise<void> {
   const { listings, stats } = await enrichAll(relevant, existing);
   console.log(
     `  longueur trouvée pour ${stats.withLength}/${stats.total} ` +
-      `(regex ${stats.fromRegex}, modèle ${stats.fromModelTable}, IA ${stats.fromLlm}) — ` +
-      `${stats.unresolved} à vérifier`,
+      `(source ${stats.fromSourceField}, regex ${stats.fromRegex}, ` +
+      `modèle ${stats.fromModelTable}, IA ${stats.fromLlm}) — ${stats.unresolved} à vérifier`,
   );
 
   // --- Fusion avec l'historique ---------------------------------------------

@@ -1,15 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Header } from '@/components/Header';
 import { DEFAULT_CRITERIA, loadCriteria, saveCriteria } from '@/lib/criteria';
+import { useDataset } from '@/lib/useDataset';
 import type { Criteria } from '@/lib/types';
 
 export default function SettingsPage() {
   const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
   const [saved, setSaved] = useState(false);
+  const state = useDataset();
 
   useEffect(() => setCriteria(loadCriteria()), []);
+
+  // Proposer une liste figée de pays vieillirait mal ; celle-ci suit ce que la
+  // collecte rapporte réellement.
+  const countries = useMemo(() => {
+    if (state.status !== 'ready') return [];
+    const found = state.dataset.listings
+      .map((l) => l.country)
+      .filter((c): c is string => Boolean(c));
+    return [...new Set(found)].sort((a, b) => a.localeCompare(b, 'fr'));
+  }, [state]);
 
   const set = (patch: Partial<Criteria>) => {
     setCriteria((previous) => ({ ...previous, ...patch }));
@@ -114,20 +126,25 @@ export default function SettingsPage() {
             </div>
           </Section>
 
-          <Section title="Zone géographique" note="Aucune case cochée = toute la France.">
-            <CheckboxGroup
-              options={[
-                ['mediterranee', 'Méditerranée'],
-                ['atlantique', 'Atlantique'],
-                ['manche', 'Manche / Mer du Nord'],
-                ['interieur', 'Intérieur (lacs, fleuves)'],
-              ]}
-              selected={criteria.allowedFacades ?? []}
-              onToggle={(value) => {
-                const next = toggleInList(criteria.allowedFacades, value, []);
-                set({ allowedFacades: next.length === 0 ? null : next });
-              }}
-            />
+          <Section
+            title="Pays"
+            note="Aucune case cochée = tous les pays. La liste est celle des pays réellement présents dans les annonces collectées."
+          >
+            {countries.length === 0 ? (
+              <p className="text-sm text-text-muted">
+                Aucune annonce collectée pour l'instant : la liste des pays apparaîtra après la
+                première collecte.
+              </p>
+            ) : (
+              <CheckboxGroup
+                options={countries.map((country) => [country, country] as [string, string])}
+                selected={criteria.allowedCountries ?? []}
+                onToggle={(value) => {
+                  const next = toggleInList(criteria.allowedCountries, value, []);
+                  set({ allowedCountries: next.length === 0 ? null : next });
+                }}
+              />
+            )}
           </Section>
 
           <Section title="Exclusions">

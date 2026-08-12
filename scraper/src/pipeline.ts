@@ -21,6 +21,7 @@ const LLM_CONFIDENCE_THRESHOLD = 0.6;
 export type PipelineStats = {
   total: number;
   withLength: number;
+  fromSourceField: number;
   fromRegex: number;
   fromModelTable: number;
   fromLlm: number;
@@ -35,6 +36,7 @@ export async function enrichAll(
   const stats: PipelineStats = {
     total: raw.length,
     withLength: 0,
+    fromSourceField: 0,
     fromRegex: 0,
     fromModelTable: 0,
     fromLlm: 0,
@@ -43,10 +45,28 @@ export async function enrichAll(
   };
 
   // --- Passe 1 : déterministe --------------------------------------------
+  // Une source qui affiche la longueur dans un champ dédié fait autorité :
+  // repasser par les regex ne pourrait que dégrader une donnée exacte.
   const partial = raw.map((listing) => {
-    const length = extractLength(listing.title, listing.description);
     const attributes = extractAttributes(listing.title, listing.description);
 
+    const declared = listing.known?.lengthM;
+    if (declared != null && declared > 0) {
+      stats.fromSourceField += 1;
+      return {
+        listing,
+        attributes,
+        length: {
+          lengthM: declared,
+          confidence: 0.95,
+          source: 'source_field' as const,
+          evidence: 'champ fourni par la source',
+          hullType: listing.known?.hullType,
+        },
+      };
+    }
+
+    const length = extractLength(listing.title, listing.description);
     if (length) {
       if (length.source === 'explicit_m' || length.source === 'feet') stats.fromRegex += 1;
       else stats.fromModelTable += 1;
@@ -95,9 +115,10 @@ export async function enrichAll(
     if (lengthM != null) stats.withLength += 1;
     else stats.unresolved += 1;
 
-    const hullType = attributes.hullType ?? length?.hullType ?? llm?.hull_type ?? null;
-    const boatKind = attributes.boatKind ?? llm?.boat_kind ?? null;
-    const yearBuilt = attributes.yearBuilt ?? llm?.year_built ?? null;
+    const known = listing.known ?? {};
+    const hullType = known.hullType ?? attributes.hullType ?? length?.hullType ?? llm?.hull_type ?? null;
+    const boatKind = known.boatKind ?? attributes.boatKind ?? llm?.boat_kind ?? null;
+    const yearBuilt = known.yearBuilt ?? attributes.yearBuilt ?? llm?.year_built ?? null;
     const isProject = attributes.isProject || Boolean(llm?.is_project);
 
     const department = departmentFromPostalCode(listing.postalCode);
@@ -126,6 +147,7 @@ export async function enrichAll(
         detectSellerType(`${listing.title} ${listing.description ?? ''}`),
       department,
       facade: facadeFromDepartment(department),
+      country: known.country ?? null,
       lengthM,
       lengthSource,
       lengthConfidence,

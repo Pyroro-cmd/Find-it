@@ -63,7 +63,11 @@ export class LeboncoinSource implements Source {
   readonly name = SOURCE;
 
   isEnabled(): boolean {
-    return process.env.FINDIT_DISABLE_LEBONCOIN !== '1';
+    // Désactivée par défaut : mesuré, Leboncoin renvoie 403 depuis les plages
+    // d'IP de datacenter (DataDome), en requête simple comme au navigateur.
+    // Le code reste en place et fonctionne depuis une IP résidentielle —
+    // FINDIT_ENABLE_LEBONCOIN=1 pour un lancement depuis votre machine.
+    return process.env.FINDIT_ENABLE_LEBONCOIN === '1';
   }
 
   async collect(): Promise<SourceResult> {

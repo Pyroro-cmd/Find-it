@@ -4,7 +4,7 @@ import { sourceLabel } from '@/lib/format';
 
 export type ViewFilters = {
   search: string;
-  facade: string;
+  country: string;
   source: string;
   maxPrice: string;
   minLength: string;
@@ -12,7 +12,7 @@ export type ViewFilters = {
 
 export const EMPTY_FILTERS: ViewFilters = {
   search: '',
-  facade: '',
+  country: '',
   source: '',
   maxPrice: '',
   minLength: '',
@@ -25,10 +25,13 @@ export const EMPTY_FILTERS: ViewFilters = {
 export function Filters({
   values,
   sources,
+  countries,
   onChange,
 }: {
   values: ViewFilters;
   sources: string[];
+  /** Construite à partir des annonces présentes : pas de pays vide dans la liste. */
+  countries: string[];
   onChange: (values: ViewFilters) => void;
 }) {
   const set = (patch: Partial<ViewFilters>) => onChange({ ...values, ...patch });
@@ -45,17 +48,18 @@ export function Filters({
         />
       </Field>
 
-      <Field label="Façade">
+      <Field label="Pays">
         <select
-          value={values.facade}
-          onChange={(e) => set({ facade: e.target.value })}
+          value={values.country}
+          onChange={(e) => set({ country: e.target.value })}
           className="rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         >
-          <option value="">Toutes</option>
-          <option value="mediterranee">Méditerranée</option>
-          <option value="atlantique">Atlantique</option>
-          <option value="manche">Manche / Nord</option>
-          <option value="interieur">Intérieur</option>
+          <option value="">Tous</option>
+          {countries.map((country) => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
         </select>
       </Field>
 

@@ -29,6 +29,7 @@ function listing(overrides: Partial<EnrichedListing> = {}): EnrichedListing {
     raw: {},
     department: '17',
     facade: 'atlantique',
+    country: 'France',
     lengthM: 10.5,
     lengthSource: 'explicit_m',
     lengthConfidence: 0.9,
