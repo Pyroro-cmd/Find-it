@@ -155,9 +155,6 @@ jobs:
     # le site doit rester en ligne et afficher l'incident.
     if: always() && needs.plan.result == 'success' && needs.collecte.result != 'cancelled'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploiement.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -174,13 +171,6 @@ jobs:
           name: donnees
           path: web/public/data/
 
-      - name: Configurer GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v5
-        with:
-          # Active Pages automatiquement si ce n'est pas déjà fait.
-          enablement: true
-
       - name: Installer les dépendances
         working-directory: web
         run: npm ci
@@ -188,9 +178,10 @@ jobs:
       - name: Construire le site
         working-directory: web
         env:
-          # GitHub Pages sert le site sous /<depot>/ : sans ce préfixe, toutes
-          # les ressources pointeraient vers la racine du domaine.
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # GitHub Pages sert un site de dépôt sous /<nom-du-depot>/ : sans ce
+          # préfixe, toutes les ressources pointeraient vers la racine du
+          # domaine et la page serait blanche.
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
       - name: Empêcher Jekyll de filtrer les fichiers
@@ -198,10 +189,23 @@ jobs:
         # or Next.js met tout son JavaScript dans `_next/`.
         run: touch web/out/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: web/out
-
-      - name: Déployer
-        id: deploiement
-        uses: actions/deploy-pages@v4
+      # -----------------------------------------------------------------------
+      # Publication par la branche `gh-pages`, et non par l'API Pages.
+      #
+      # `actions/deploy-pages` exige que Pages soit activé et configuré sur
+      # « GitHub Actions » ; or le jeton d'un workflow n'a pas le droit
+      # d'activer Pages lui-même (« Resource not accessible by integration »).
+      # Publier la branche ne demande que `contents: write`, dont on dispose.
+      # -----------------------------------------------------------------------
+      - name: Publier le site sur la branche gh-pages
+        run: |
+          cd web/out
+          git init -q
+          git config user.name  "Find-it (publication)"
+          git config user.email "actions@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git add -A
+          git commit -q -m "Site publié le $(TZ=Europe/Paris date +'%d/%m/%Y à %H:%M')"
+          # L'historique du site n'a aucune valeur : seul l'état courant compte.
+          git push -f origin HEAD:gh-pages
+          echo "Site publié : https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"

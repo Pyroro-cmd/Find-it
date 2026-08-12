@@ -2,7 +2,7 @@ import type { Browser, Page } from 'playwright';
 import * as cheerio from 'cheerio';
 import type { Element } from 'domhandler';
 import type { RawListing, Source, SourceResult } from '../types.js';
-import { dumpPage, humanDelay, launchBrowser, newContext } from '../util/browser.js';
+import { diagnosePage, dumpPage, humanDelay, launchBrowser, newContext } from '../util/browser.js';
 
 /**
  * theyachtmarket.com (version française) — seconde source.
@@ -60,6 +60,7 @@ export class TheYachtMarketSource implements Source {
           const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
           if (response && response.status() >= 400) {
             errors.push(`page ${pageNum} : HTTP ${response.status()}`);
+            if (pageNum === 1) await diagnosePage(page, 'tym-refus');
             break;
           }
           await page.waitForTimeout(1800);
@@ -67,6 +68,7 @@ export class TheYachtMarketSource implements Source {
           if (pageNum === 1) await dumpPage(page, 'tym-page1');
 
           const found = parseResultsPage(await page.content());
+          if (found.length === 0 && pageNum === 1) await diagnosePage(page, 'tym');
           const before = byId.size;
           for (const listing of found) {
             if (!byId.has(listing.sourceId)) byId.set(listing.sourceId, listing);
@@ -113,6 +115,7 @@ async function applySearchFilters(page: Page, errors: string[]): Promise<boolean
     const submitted = await submitSearch(page);
     if (!submitted) {
       errors.push('formulaire de recherche non soumis — collecte sans filtre');
+      await diagnosePage(page, 'tym-formulaire');
       return false;
     }
 

@@ -2,7 +2,7 @@ import type { Browser, Page } from 'playwright';
 import * as cheerio from 'cheerio';
 import type { Element } from 'domhandler';
 import type { RawListing, Source, SourceResult } from '../types.js';
-import { dumpPage, humanDelay, launchBrowser, newContext } from '../util/browser.js';
+import { diagnosePage, dumpPage, humanDelay, launchBrowser, newContext } from '../util/browser.js';
 
 /**
  * boat24.com — première source du projet.
@@ -77,6 +77,11 @@ export class Boat24Source implements Source {
           const added = byId.size - before;
 
           console.log(`    boat24 page ${pageNum} : ${found.length} cartes, ${added} nouvelles`);
+
+          // Zéro carte sur la première page = sélecteur périmé ou page de
+          // blocage. Le diagnostic part dans le journal du run, seul endroit
+          // consultable depuis l'environnement de développement.
+          if (found.length === 0 && pageNum === 1) await diagnosePage(page, 'boat24');
 
           // Si la pagination n'est pas prise en compte par le site, la page 2
           // renvoie les mêmes annonces : on s'arrête plutôt que de boucler.

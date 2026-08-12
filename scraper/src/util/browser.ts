@@ -113,6 +113,50 @@ export function describeJsonShape(root: unknown, maxEntries = 25): string[] {
 }
 
 /**
+ * Décrit une page directement dans les logs du run.
+ *
+ * L'archive HTML ne sert à rien si on ne peut pas la télécharger — c'est le cas
+ * ici, l'environnement de développement n'atteint pas le stockage des artefacts
+ * GitHub. Ce résumé, lui, arrive dans le journal du run : titre, adresse finale
+ * (une redirection vers une page de blocage se voit immédiatement), classes
+ * répétées (celles des cartes d'annonces) et début du texte.
+ */
+export async function diagnosePage(page: Page, label: string): Promise<void> {
+  try {
+    const title = await page.title().catch(() => '?');
+    const text = (await page.evaluate(() => document.body?.innerText ?? '').catch(() => '')) as string;
+    const clean = text.replace(/\s+/g, ' ').trim();
+
+    console.log(`    [diag ${label}] url finale : ${page.url()}`);
+    console.log(`    [diag ${label}] titre : ${title}`);
+    console.log(`    [diag ${label}] texte (300 c.) : ${clean.slice(0, 300)}`);
+
+    const classes = await describeRepeatedClasses(page, 20);
+    console.log(`    [diag ${label}] classes répétées : ${classes.join(', ') || 'aucune'}`);
+
+    // Un échantillon de structure vaut mieux qu'une liste de classes : il dit
+    // où sont réellement les données.
+    const sample = await page
+      .evaluate(() => {
+        const candidates = Array.from(document.querySelectorAll('article, li, div'))
+          .filter((el) => {
+            const t = (el as HTMLElement).innerText ?? '';
+            return /€|EUR/.test(t) && t.length > 60 && t.length < 600;
+          })
+          .slice(0, 2);
+        return candidates.map((el) => el.outerHTML.slice(0, 700));
+      })
+      .catch(() => [] as string[]);
+
+    for (const [i, html] of sample.entries()) {
+      console.log(`    [diag ${label}] bloc avec prix #${i + 1} : ${html.replace(/\s+/g, ' ')}`);
+    }
+  } catch (error) {
+    console.warn(`    [diag ${label}] impossible :`, error);
+  }
+}
+
+/**
  * Classes CSS les plus fréquentes sur les éléments répétés d'une page.
  * Sert à calibrer les sélecteurs des sites dont le HTML n'a pas pu être
  * inspecté en amont : un site d'annonces répète la classe de ses cartes.
