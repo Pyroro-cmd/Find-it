@@ -6,6 +6,8 @@
   "description": "Collecte quotidienne des annonces de voiliers pour Find-it",
   "scripts": {
     "scrape": "tsx src/index.ts",
+    "collecte:locale": "tsx src/collecte-locale.ts",
+    "facebook:connexion": "tsx src/facebook-connexion.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --test --import tsx test/*.test.ts",
     "probe": "tsx src/probe.ts",

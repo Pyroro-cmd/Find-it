@@ -98,6 +98,8 @@ favoris, sans vous gêner.
   les épaves.
 - **Filtre selon vos critères**, modifiables depuis le site et appliqués
   instantanément — le filtrage se fait dans le navigateur, pas à la collecte.
+- **Ajoute Leboncoin et Facebook sur demande**, via une collecte lancée depuis
+  votre machine : voir « Collecte locale » plus bas.
 
 ### Les six vues
 
@@ -179,9 +181,9 @@ parseur. Les constats ci-dessous sont donc des relevés, pas des suppositions.
 | **yachtall.com** | 200, et **tout est écrit en clair sur des étiquettes françaises** | **source principale** |
 | **boat24.com** | 200 sur la rubrique, mais 403 sur toute URL portant des paramètres — donc aucun filtrage possible | **source d'appoint** |
 | **theyachtmarket.com** | test JavaScript Cloudflare sur les résultats | **désactivé** |
-| **leboncoin.fr** | 403 en `fetch` **et** en Chromium piloté (DataDome) | **désactivé** |
+| **leboncoin.fr** | 403 en `fetch`, en Chromium piloté, et toujours 403 après 30 s d'attente du challenge (DataDome) | **collecte locale** |
 | **annoncesbateau, bateaux24, youboat** | 403, pare-feu applicatif, dès la première requête | écartés |
-| **Facebook Marketplace** | même barrage, plus le risque de perdre le compte | **désactivé** |
+| **Facebook Marketplace** | 200 puis redirection vers `/login` : une session connectée est exigée | **collecte locale** |
 
 ### Ce que yachtall donne, et pourquoi ça change tout
 
@@ -215,14 +217,12 @@ Le blocage n'est pas un défaut de parseur : DataDome, l'anti-bot du site,
 les runners GitHub. La page ne s'ouvre jamais, quelle que soit la finesse du
 code.
 
-Deux façons de le contourner, aucune gratuite et sans risque :
+Deux façons de le contourner :
 
-1. un **proxy résidentiel** (quelques euros par mois) — sortirait du cahier des
+1. un **proxy résidentiel** — quelques euros par mois, donc hors du cahier des
    charges « zéro frais » ;
-2. lancer la collecte **depuis votre propre machine**, sur votre connexion :
-   `FINDIT_ENABLE_LEBONCOIN=1 npm run scrape` dans `scraper/`, puis commiter le
-   fichier de données produit. C'est gratuit, et ça marche depuis une IP
-   résidentielle.
+2. **la collecte locale**, décrite juste en dessous : gratuite, et c'est la
+   solution retenue.
 
 Conséquence à connaître : les annonces affichées sont **européennes**, pas
 strictement françaises — d'où le filtre par pays sur le site. Ces deux sites
@@ -241,16 +241,58 @@ main en cochant « Archiver le HTML », puis récupérez l'artefact
 
 ---
 
-## Facebook Marketplace — désactivé par défaut, volontairement
+## Collecte locale — Leboncoin et Facebook
 
-Marketplace n'a pas d'API publique et exige une session connectée. Automatiser
-une navigation avec un compte **viole les conditions d'utilisation de Meta et
-expose ce compte à une suspension**. Si vous l'activez :
+Les deux sources françaises ne sont pas atteignables depuis un serveur, et
+aucun code n'y changera rien : la protection filtre **l'origine de la requête**,
+pas son contenu. Mesuré depuis GitHub Actions, à plusieurs reprises :
 
-- n'utilisez **jamais** votre compte principal — créez un compte secondaire
-  dédié et acceptez qu'il puisse être perdu ;
-- ne mettez aucun identifiant dans ce dépôt (il est public) : la session passe
-  par le secret GitHub `FB_STORAGE_STATE_JSON`.
+```
+leboncoin — recherche voilier   HTTP 403, page vide même après 30 s d'attente
+facebook  — marketplace public  HTTP 200 puis redirection vers /login
+```
+
+Depuis votre connexion, en revanche, les deux fonctionnent. D'où ce mode :
+**la même collecte que le robot quotidien, lancée depuis votre machine**,
+Leboncoin inclus, qui publie ensuite le résultat sur le site.
+
+```bash
+cd scraper
+npm install
+npx playwright install chromium
+
+npm run collecte:locale
+```
+
+Le script active Leboncoin (et theyachtmarket, lui aussi joignable depuis chez
+vous), lance la collecte, puis commite et pousse le fichier de données. Le site
+se reconstruit tout seul dans les deux minutes.
+
+Rien ne remplace la collecte automatique de 8 h : les deux alimentent le même
+fichier et l'historique se cumule. Lancez la collecte locale quand vous y
+pensez — les annonces françaises viendront s'ajouter aux européennes.
+
+### Facebook Marketplace — lisez ceci avant
+
+> **N'utilisez jamais votre compte principal.** Automatiser une navigation
+> Marketplace contrevient aux conditions d'utilisation de Meta et expose le
+> compte à une suspension. Créez un compte secondaire dédié, et acceptez qu'il
+> puisse être perdu.
+
+```bash
+npm run facebook:connexion
+```
+
+Un navigateur s'ouvre ; connectez-vous avec le compte dédié, vérifiez que
+Marketplace s'affiche, revenez au terminal et appuyez sur Entrée. La session
+est enregistrée dans `scraper/fb-session.json`, en lecture pour vous seul.
+
+Ce fichier contient des jetons de connexion — **l'équivalent d'un mot de
+passe**. Il est déjà exclu par `.gitignore` : ne le commitez pas, ne le collez
+nulle part. Les collectes locales suivantes l'utiliseront automatiquement.
+
+Pour révoquer : déconnectez le compte depuis Facebook (Paramètres → Sécurité →
+Connexions actives) et supprimez le fichier.
 
 ---
 
@@ -297,7 +339,8 @@ Surchargeables par variable d'environnement, sans toucher au code :
 | `TYM_MIN_LENGTH` | `8` | Plancher envoyé au formulaire de recherche |
 | `FINDIT_DISABLE_BOAT24` | — | `1` coupe la source |
 | `FINDIT_ENABLE_TYM` | — | `1` réactive theyachtmarket (utile en local seulement) |
-| `FINDIT_ENABLE_LEBONCOIN` | — | `1` réactive Leboncoin (utile en local seulement) |
+| `FINDIT_ENABLE_LEBONCOIN` | — | `1` réactive Leboncoin (posé par `collecte:locale`) |
+| `FB_STORAGE_STATE` | `scraper/fb-session.json` | Session Facebook, produite par `facebook:connexion` |
 | `FINDIT_ENABLE_FACEBOOK` | — | `1` active Facebook |
 | `FINDIT_DEBUG_DUMP` | — | `1` archive le HTML des pages |
 
