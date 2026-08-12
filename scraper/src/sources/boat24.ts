@@ -34,7 +34,12 @@ const SOURCE = 'boat24';
 const BASE = 'https://www.boat24.com';
 const LISTING_URL = `${BASE}/fr/voiliers/`;
 
-const MAX_PAGES = Number(process.env.B24_MAX_PAGES ?? 12);
+/**
+ * Une seule page, et c'est tout ce que le site accorde : `?page=2` répond 403,
+ * comme toute URL portant des paramètres. Insister ne fait qu'ajouter une
+ * requête refusée et une ligne d'erreur trompeuse à chaque collecte.
+ */
+const MAX_PAGES = Number(process.env.B24_MAX_PAGES ?? 1);
 /** Marge volontaire au-dessus du budget : une annonce se négocie. */
 const MAX_PRICE = Number(process.env.B24_MAX_PRICE ?? 30000);
 const MIN_LENGTH_M = Number(process.env.B24_MIN_LENGTH ?? 8);

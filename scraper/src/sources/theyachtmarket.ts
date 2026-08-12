@@ -33,8 +33,17 @@ const MIN_LENGTH_M = Number(process.env.TYM_MIN_LENGTH ?? 8);
 export class TheYachtMarketSource implements Source {
   readonly name = SOURCE;
 
+  /**
+   * Désactivée : la page de résultats est protégée par un test JavaScript
+   * Cloudflare qui ne se résout pas depuis un centre de données — mesuré sur
+   * plusieurs runs, y compris avec vingt secondes d'attente. La source coûtait
+   * vingt-six secondes par collecte pour zéro annonce.
+   *
+   * Le code reste en place : depuis une connexion résidentielle, le test passe
+   * généralement. `FINDIT_ENABLE_TYM=1` la réactive.
+   */
   isEnabled(): boolean {
-    return process.env.FINDIT_DISABLE_TYM !== '1';
+    return process.env.FINDIT_ENABLE_TYM === '1';
   }
 
   async collect(): Promise<SourceResult> {

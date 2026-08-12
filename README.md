@@ -289,14 +289,14 @@ Surchargeables par variable d'environnement, sans toucher au code :
 | `YA_MAX_PRICE` | `30000` | Plafond appliqué à la collecte |
 | `YA_MIN_LENGTH` | `8` | Plancher de longueur, en mètres |
 | `FINDIT_DISABLE_YACHTALL` | — | `1` coupe la source |
-| `B24_MAX_PAGES` | `12` | Pages parcourues sur boat24 |
+| `B24_MAX_PAGES` | `1` | Pages parcourues sur boat24 (au-delà, le site refuse) |
 | `B24_MAX_PRICE` | `30000` | Plafond appliqué à la collecte |
 | `B24_MIN_LENGTH` | `8` | Plancher de longueur, en mètres |
 | `TYM_MAX_PAGES` | `8` | Pages parcourues sur theyachtmarket |
 | `TYM_MAX_PRICE` | `30000` | Plafond envoyé au formulaire de recherche |
 | `TYM_MIN_LENGTH` | `8` | Plancher envoyé au formulaire de recherche |
 | `FINDIT_DISABLE_BOAT24` | — | `1` coupe la source |
-| `FINDIT_DISABLE_TYM` | — | `1` coupe la source |
+| `FINDIT_ENABLE_TYM` | — | `1` réactive theyachtmarket (utile en local seulement) |
 | `FINDIT_ENABLE_LEBONCOIN` | — | `1` réactive Leboncoin (utile en local seulement) |
 | `FINDIT_ENABLE_FACEBOOK` | — | `1` active Facebook |
 | `FINDIT_DEBUG_DUMP` | — | `1` archive le HTML des pages |
