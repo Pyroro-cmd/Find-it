@@ -1,6 +1,162 @@
 {
  "version": 1,
- "generatedAt": "",
- "run": null,
- "listings": []
+ "generatedAt": "2026-08-12T16:44:22.459Z",
+ "run": {
+  "startedAt": "2026-08-12T16:43:33.771Z",
+  "finishedAt": "2026-08-12T16:44:22.459Z",
+  "status": "partial",
+  "trigger": "manual",
+  "stats": {
+   "total": 2,
+   "withLength": 2,
+   "fromSourceField": 2,
+   "fromRegex": 0,
+   "fromModelTable": 0,
+   "fromLlm": 0,
+   "unresolved": 0,
+   "llmCalled": 0,
+   "inserted": 2,
+   "updated": 0,
+   "priceDrops": 0,
+   "gone": 0,
+   "pruned": 0,
+   "collected": 2
+  },
+  "sources": {
+   "yachtall": {
+    "count": 1,
+    "errors": [],
+    "reachable": true,
+    "seconds": 15
+   },
+   "boat24": {
+    "count": 1,
+    "errors": [
+     "page 2 : HTTP 403"
+    ],
+    "reachable": true,
+    "seconds": 8
+   },
+   "theyachtmarket": {
+    "count": 0,
+    "errors": [
+     "page 1 : HTTP 403 (protection Cloudflare)"
+    ],
+    "reachable": true,
+    "seconds": 26
+   },
+   "leboncoin": {
+    "skipped": true
+   },
+   "facebook": {
+    "skipped": true
+   }
+  }
+ },
+ "listings": [
+  {
+   "id": "yachtall:252718",
+   "source": "yachtall",
+   "sourceId": "252718",
+   "url": "https://www.yachtall.com/fr/bateau/trewes-commodore-s252718",
+   "title": "Trewes Commodore",
+   "description": "Trewes Commodore Trewes Commodore Voilier / yacht à voile: Jongert, bateau ancien, bateau en acier Longueur x largeur: 9,35 m x 2,65 m, 9,35 x 2,65 m construit: avant 1985, cabines: 1 Moteur: Mitsubishi, 24 cv (18 kW), diesel € 7 500 Lieu: Pays-Bas avant 1985 Société: Breitner Yacht Brokers Prix: € 7 500",
+   "images": [
+    "https://image.yachtall.com/image/sboat/0/252/718/8jnferf92m.jpg",
+    "https://static.yachtall.com/image/layout/icon/request.gif",
+    "https://static.yachtall.com/image/layout/star-empty.png"
+   ],
+   "priceEur": 7500,
+   "locationLabel": "Pays-Bas avant 1985",
+   "department": null,
+   "facade": null,
+   "country": "Pays-Bas avant 1985",
+   "lengthM": 9.35,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1985,
+   "material": "acier",
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": "pro",
+   "score": 63,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 40,
+    "prix_au_metre": 802,
+    "longueur": 2,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 6,
+    "bonus": 5,
+    "total": 63
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-12T16:44:22.459Z",
+   "lastSeenAt": "2026-08-12T16:44:22.459Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 7500,
+     "at": "2026-08-12T16:44:22.459Z"
+    }
+   ]
+  },
+  {
+   "id": "boat24:735050",
+   "source": "boat24",
+   "sourceId": "735050",
+   "url": "https://www.boat24.com/fr/voiliers/jeanneau/jeanneau-rush/detail/735050/",
+   "title": "Jeanneau Rush",
+   "description": "1/6retoursuivantFavoriNEWQuillardJeanneau Rush9,50 x 3,90 mDimensions 1 x 14 cv / 10 kWPuissance du moteur1982Année de fabricationFrance » Pays de la Loire » pornic21 000 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
+   "images": [
+    "https://static.b24.co/thumbs/xlarge/735050-1786540211.jpg"
+   ],
+   "priceEur": 21000,
+   "locationLabel": "France » Pays de la Loire » pornic",
+   "department": null,
+   "facade": null,
+   "country": "France",
+   "lengthM": 9.5,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1982,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 40,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 18,
+    "prix_au_metre": 2211,
+    "longueur": 3,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "bonus": 5,
+    "total": 40
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-12T16:44:22.459Z",
+   "lastSeenAt": "2026-08-12T16:44:22.459Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 21000,
+     "at": "2026-08-12T16:44:22.459Z"
+    }
+   ]
+  }
+ ]
 }
