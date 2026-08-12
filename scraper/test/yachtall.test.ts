@@ -188,3 +188,20 @@ test('une même annonce répétée dans la page n’apparaît qu’une fois', ()
   });
   assert.equal(parsePage(une + une).listings.length, 1);
 });
+
+test('le lieu ne happe pas la mention d’année qui le suit', () => {
+  // Cas relevé sur le premier run réel : le site place parfois l'année après
+  // le lieu, et le pays devenait « Pays-Bas avant 1985 ».
+  const fields = parseCardText(
+    "Trewes Commodore Voilier / yacht à voile, bateau d'occasion " +
+      '9,35 x 3,10 m Lieu: Pays-Bas avant 1985 Prix: € 7 500',
+  );
+  assert.equal(fields.country, 'Pays-Bas');
+  assert.equal(fields.location, 'Pays-Bas');
+  assert.equal(fields.priceEur, 7500);
+});
+
+test('une année approximative reste lisible', () => {
+  assert.equal(parseCardText('Voilier construit: avant 1985 Prix: € 7 500').yearBuilt, 1985);
+  assert.equal(parseCardText('Voilier construit: env. 1990 Prix: € 9 000').yearBuilt, 1990);
+});

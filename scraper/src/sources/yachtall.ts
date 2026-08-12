@@ -272,13 +272,18 @@ export function parseCardText(brut: string): YachtallFields {
   const lengthM = dims ? nombre(dims[1]) : null;
   const beamM = dims ? nombre(dims[2]) : null;
 
-  const annee = texte.match(/construit:\s*(\d{4})/i);
+  // « construit: 1998 », mais aussi « construit: avant 1985 » et « env. 1990 ».
+  const annee = texte.match(/construit:\s*(?:avant\s+|env\.?\s*|ca\.?\s*|~\s*)?(\d{4})/i);
   const yearBuilt = annee && Number(annee[1]) >= 1900 ? Number(annee[1]) : null;
 
   // « Lieu: Monténégro, Bar / Tivat » — le pays vient en premier.
-  const lieu = texte.match(/Lieu:\s*(.+?)\s*(?:Société:|Prix:|Moteur:|$)/i);
-  const location = lieu ? lieu[1].replace(/[,\s]+$/, '') : null;
-  const country = location ? (location.split(',')[0]?.trim() ?? null) : null;
+  //
+  // La capture doit s'arrêter à la mention suivante, y compris quand le site
+  // place l'année après le lieu : sans cette borne, le premier run réel a
+  // produit un pays « Pays-Bas avant 1985 ».
+  const lieu = texte.match(/Lieu:\s*(.+?)\s*(?:Société:|Prix:|Moteur:|construit:|avant\s+\d{4}|$)/i);
+  const location = lieu ? nettoyer(lieu[1]) : null;
+  const country = location ? nettoyer(location.split(',')[0] ?? '') || null : null;
 
   const societe = texte.match(/Société:\s*(.+?)\s*(?:Prix:|Lieu:|$)/i);
   const seller = societe ? societe[1].trim() : null;
@@ -313,6 +318,14 @@ export function parseCardText(brut: string): YachtallFields {
     hullType,
     resume: texte.slice(0, 500),
   };
+}
+
+/** Retire la ponctuation de bord et les mentions d'année accrochées au lieu. */
+function nettoyer(valeur: string): string {
+  return valeur
+    .replace(/\s*(?:avant|env\.?|ca\.?)\s*\d{4}.*$/i, '')
+    .replace(/[,;/\s]+$/, '')
+    .trim();
 }
 
 function nombre(valeur: string): number {

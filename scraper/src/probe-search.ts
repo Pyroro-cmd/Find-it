@@ -1,32 +1,34 @@
 import type { Page } from 'playwright';
 import { launchBrowser, newContext } from './util/browser.js';
+import { parsePage } from './sources/yachtall.js';
 
 /**
- * Sonde de pagination et de structure des cartes.
+ * Sonde de pagination de yachtall.
  *
- * Trois runs réels ont dessiné une règle nette : sur ces sites, **une URL de
- * chemin passe, une URL à paramètres est bloquée**. boat24 répond 200 sur
- * `/fr/voiliers/` et 403 sur `/fr/voiliers/?page=2` ; yachtall répond 200 sur
- * `/fr/voiliers` et sert un test anti-bot sur `/fr/voiliers?prix_max=…`.
+ * La source fonctionne, mais ne rend qu'une page de 45 annonces : le
+ * collecteur a tenté `/fr/voiliers/2`, sans succès. Or les URL à paramètres
+ * déclenchent la vérification anti-bot du site — il faut donc trouver la forme
+ * de chemin qu'il accepte, si elle existe.
  *
- * Le filtrage par le site est donc hors d'atteinte. Reste la voie honnête :
- * parcourir les pages de la rubrique et trier soi-même. Encore faut-il savoir
- * comment le site numérote ses pages — c'est ce que cette sonde relève, avec
- * la structure d'une carte pour écrire le parseur en une fois.
+ * Le critère est sans ambiguïté : la page répond, elle contient des cartes, et
+ * ce ne sont **pas les mêmes annonces** que la première page. Une page qui
+ * renvoie les mêmes bateaux est un faux positif — c'est ce qui rend le test
+ * utile plutôt que rassurant.
  *
  *   npm run probe:search
  */
 
-type Cible = {
-  nom: string;
-  url: string;
-  /** Classe portée par une carte d'annonce, relevée aux sondes précédentes. */
-  carte: string;
-};
+const BASE = 'https://www.yachtall.com';
+const PREMIERE = `${BASE}/fr/voiliers`;
 
-const CIBLES: Cible[] = [
-  { nom: 'yachtall', url: 'https://www.yachtall.com/fr/voiliers', carte: 'js-hrefBoat' },
-  { nom: 'boat24', url: 'https://www.boat24.com/fr/voiliers/', carte: 'blurb' },
+const CANDIDATES = [
+  `${BASE}/fr/voiliers/2`,
+  `${BASE}/fr/voiliers/page/2`,
+  `${BASE}/fr/voiliers/page-2`,
+  `${BASE}/fr/voiliers/seite-2`,
+  `${BASE}/fr/voiliers-2`,
+  `${BASE}/fr/voiliers/p2`,
+  `${BASE}/fr/bateaux/voiliers/2`,
 ];
 
 async function main(): Promise<void> {
@@ -35,22 +37,34 @@ async function main(): Promise<void> {
     const context = await newContext(browser);
     const page = await context.newPage();
 
-    for (const cible of CIBLES) {
-      console.log(`\n${'═'.repeat(78)}\n${cible.nom.toUpperCase()} — ${cible.url}\n${'═'.repeat(78)}`);
+    console.log(`\n${'═'.repeat(78)}\nPAGE 1 — référence\n${'═'.repeat(78)}`);
+    const premiers = await releve(page, PREMIERE);
+    console.log(`  ${premiers.cartes} cartes — premiers identifiants : ${[...premiers.ids].slice(0, 5).join(', ')}`);
+
+    console.log(`\n${'═'.repeat(78)}\nCANDIDATS — page 2\n${'═'.repeat(78)}`);
+    for (const url of CANDIDATES) {
+      const r = await releve(page, url);
+      const nouveaux = [...r.ids].filter((id) => !premiers.ids.has(id));
+      const verdict =
+        r.statut >= 400
+          ? 'refusé'
+          : r.cartes === 0
+            ? 'aucune carte'
+            : nouveaux.length === 0
+              ? 'mêmes annonces qu’en page 1'
+              : `✔ ${nouveaux.length} annonces inédites`;
+      console.log(`  ${url.replace(BASE, '').padEnd(28)} HTTP ${r.statut} — ${r.cartes} cartes — ${verdict}`);
+    }
+
+    // Le plan de site donne parfois la forme des URL sans avoir à deviner.
+    console.log(`\n${'═'.repeat(78)}\nPLAN DE SITE\n${'═'.repeat(78)}`);
+    for (const url of [`${BASE}/sitemap.xml`, `${BASE}/robots.txt`]) {
       try {
-        const response = await page.goto(cible.url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-        await page.waitForTimeout(3500);
-        await accepterCookies(page);
-        await defiler(page);
-
-        console.log(`  HTTP ${response?.status() ?? '?'} — ${await page.title().catch(() => '?')}`);
-        console.log(`  cartes « ${cible.carte} » : ${await page.locator(`[class~="${cible.carte}"]`).count()}`);
-
-        await relevePagination(page);
-        await releveControlesPagination(page);
-        await releveCarte(page, cible.carte);
+        const reponse = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+        const contenu = (await page.content()).replace(/\s+/g, ' ');
+        console.log(`  ${url} → HTTP ${reponse?.status() ?? '?'} : ${contenu.slice(0, 700)}`);
       } catch (error) {
-        console.log(`  échec : ${(error as Error).message.slice(0, 160)}`);
+        console.log(`  ${url} → échec : ${(error as Error).message.slice(0, 90)}`);
       }
     }
   } finally {
@@ -58,114 +72,25 @@ async function main(): Promise<void> {
   }
 }
 
-/** Tout ce qui ressemble à un lien de page suivante. */
-async function relevePagination(page: Page): Promise<void> {
-  const liens = await page.evaluate(() => {
-    const sortie: string[] = [];
-    for (const el of Array.from(document.querySelectorAll('a[href], [data-href], [onclick]'))) {
-      const href = el.getAttribute('href') ?? el.getAttribute('data-href') ?? '';
-      const onclick = el.getAttribute('onclick') ?? '';
-      const texte = (el.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 24);
-      if (/page|suivant|next|weiter|\/\d+\/?$/i.test(href) || /page/i.test(onclick)) {
-        sortie.push(`${texte || '(sans texte)'} → ${href || onclick.slice(0, 90)}`);
-      }
-    }
-    return sortie;
-  });
-
-  console.log('  liens de pagination :');
-  for (const lien of [...new Set(liens)].slice(0, 25)) console.log(`    ${lien}`);
-  if (liens.length === 0) console.log('    aucun — la pagination est probablement en JavaScript');
-}
-
-/**
- * Les commandes de pagination quand elles ne sont pas de simples liens.
- *
- * Si la page suivante s'obtient par un clic et non par une URL, le collecteur
- * peut très bien cliquer — mais il lui faut le sélecteur exact.
- */
-async function releveControlesPagination(page: Page): Promise<void> {
-  const releve = await page.evaluate(() => {
-    const sortie: string[] = [];
-
-    for (const el of Array.from(document.querySelectorAll('[class*="pag" i], [id*="pag" i]'))) {
-      sortie.push(`conteneur : ${el.outerHTML.replace(/\s+/g, ' ').slice(0, 600)}`);
-      if (sortie.length > 4) break;
-    }
-
-    for (const el of Array.from(document.querySelectorAll('button, [role="button"], input[type="button"]'))) {
-      const texte = (el.textContent ?? (el as HTMLInputElement).value ?? '').replace(/\s+/g, ' ').trim();
-      if (!texte || texte.length > 30) continue;
-      if (/suivant|next|plus|more|charger|weiter|»|›|\d+/i.test(texte)) {
-        sortie.push(`bouton « ${texte} » : ${el.outerHTML.replace(/\s+/g, ' ').slice(0, 220)}`);
-      }
-    }
-
-    return sortie;
-  });
-
-  console.log('  commandes de pagination :');
-  for (const ligne of [...new Set(releve)].slice(0, 12)) console.log(`    ${ligne}`);
-  if (releve.length === 0) console.log('    aucune');
-
-  // Le bas de page contient presque toujours la pagination.
-  const bas = await page.evaluate(() => document.body.innerHTML.slice(-2500).replace(/\s+/g, ' '));
-  console.log(`  bas du document : ${bas}`);
-}
-
-/** Structure complète d'une carte : de quoi écrire le parseur sans deviner. */
-async function releveCarte(page: Page, classe: string): Promise<void> {
-  // On remonte jusqu'à l'ancêtre qui contient un prix : c'est la carte
-  // complète, pas seulement le lien du titre.
-  const html = await page
-    .evaluate((cls) => {
-      const cartes = Array.from(document.querySelectorAll(`[class~="${cls}"]`));
-      let noeud: HTMLElement | null = (cartes[0] as HTMLElement) ?? null;
-      for (let i = 0; i < 5 && noeud; i++) {
-        if (/€/.test(noeud.innerText ?? '')) break;
-        noeud = noeud.parentElement;
-      }
-      return noeud?.outerHTML ?? '';
-    }, classe)
-    .catch(() => '');
-
-  const texte = await page
-    .evaluate((cls) => {
-      const cartes = Array.from(document.querySelectorAll(`[class~="${cls}"]`));
-      let noeud: HTMLElement | null = (cartes[0] as HTMLElement) ?? null;
-      for (let i = 0; i < 5 && noeud; i++) {
-        if (/€/.test(noeud.innerText ?? '')) break;
-        noeud = noeud.parentElement;
-      }
-      return noeud?.innerText ?? '';
-    }, classe)
-    .catch(() => '');
-
-  console.log(`  texte de la carte : ${texte.replace(/\s+/g, ' ').trim().slice(0, 400)}`);
-  console.log(`  html de la carte  : ${html.replace(/\s+/g, ' ').slice(0, 2200)}`);
-}
-
-async function defiler(page: Page): Promise<void> {
-  for (let i = 0; i < 4; i++) {
-    await page.mouse.wheel(0, 4000);
-    await page.waitForTimeout(700);
-  }
-}
-
-async function accepterCookies(page: Page): Promise<void> {
-  for (const selector of [
-    '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll',
-    '#CybotCookiebotDialogBodyButtonAccept',
-    'button:has-text("Accepter")',
-    'button:has-text("Tout accepter")',
-    '.ccm--decline-cookies, .ccm-root button',
-  ]) {
-    const button = page.locator(selector).first();
-    if ((await button.count().catch(() => 0)) > 0) {
-      await button.click({ timeout: 4000 }).catch(() => undefined);
-      await page.waitForTimeout(1000);
-      return;
-    }
+async function releve(page: Page, url: string): Promise<{ statut: number; cartes: number; ids: Set<string> }> {
+  try {
+    const reponse = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
+    await page.waitForTimeout(2500);
+    const { listings, cardsSeen } = parsePage(await page.content());
+    // `listings` est filtré par prix ; pour comparer deux pages il faut tous
+    // les identifiants, d'où cette lecture directe des liens.
+    const ids = new Set(
+      await page.evaluate(() =>
+        Array.from(document.querySelectorAll('a[class~="js-hrefBoat"]'))
+          .map((a) => (a.getAttribute('href') ?? '').match(/-s(\d+)/)?.[1] ?? '')
+          .filter(Boolean),
+      ),
+    );
+    void listings;
+    return { statut: reponse?.status() ?? 0, cartes: cardsSeen, ids };
+  } catch (error) {
+    console.log(`    (${url} : ${(error as Error).message.slice(0, 80)})`);
+    return { statut: 0, cartes: 0, ids: new Set() };
   }
 }
 
