@@ -1,0 +1,23 @@
+# Dépendances
+node_modules/
+
+# Build
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Secrets — ne doivent JAMAIS être commités
+.env
+.env.local
+.env*.local
+*storage-state*.json
+fb-session.json
+
+# Artefacts de debug du scraper
+.artifacts/
+scraper/.artifacts/
+
+# Système
+.DS_Store
+Thumbs.db

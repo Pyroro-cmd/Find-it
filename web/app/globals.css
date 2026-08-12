@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+/*
+  Palette : bleus profonds de marine, sable pour les accents. Définie en
+  variables pour que le thème sombre ne redéfinisse que les valeurs.
+*/
+:root {
+  --bg: #f6f4ef;
+  --surface: #ffffff;
+  --surface-muted: #efece5;
+  --border: #ddd8cd;
+  --text: #16232e;
+  --text-muted: #5c6b78;
+  --accent: #0f4c68;
+  --accent-soft: #d9e8ee;
+  --good: #1f6d4b;
+  --good-soft: #dcefe4;
+  --warn: #8a5a12;
+  --warn-soft: #f6e9d3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101820;
+    --surface: #17222c;
+    --surface-muted: #1e2b37;
+    --border: #2a3a48;
+    --text: #e8eef3;
+    --text-muted: #93a5b3;
+    --accent: #6db6d4;
+    --accent-soft: #1c3543;
+    --good: #63c396;
+    --good-soft: #14332a;
+    --warn: #e0ab5f;
+    --warn-soft: #342814;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
