@@ -74,6 +74,68 @@ export async function dumpPage(page: Page, label: string): Promise<void> {
   }
 }
 
+/**
+ * Décrit la forme d'un objet JSON : chemin de chaque tableau d'objets un peu
+ * fourni, et clés de son premier élément.
+ *
+ * C'est l'outil de calibration central. Les parseurs ont été écrits sans
+ * pouvoir atteindre les sites ; ce résumé, imprimé dans les logs du run,
+ * indique où se trouvent réellement les annonces et sous quelle forme —
+ * sans avoir à télécharger et fouiller une archive HTML.
+ */
+export function describeJsonShape(root: unknown, maxEntries = 25): string[] {
+  const lines: string[] = [];
+  const seen = new Set<unknown>();
+
+  const walk = (node: unknown, path: string, depth: number): void => {
+    if (lines.length >= maxEntries || depth > 10) return;
+    if (node === null || typeof node !== 'object') return;
+    if (seen.has(node)) return;
+    seen.add(node);
+
+    if (Array.isArray(node)) {
+      const objects = node.filter((n) => n !== null && typeof n === 'object' && !Array.isArray(n));
+      if (objects.length >= 3) {
+        const keys = Object.keys(objects[0] as Record<string, unknown>).slice(0, 18);
+        lines.push(`${path}[] — ${node.length} éléments — clés : ${keys.join(', ')}`);
+      }
+      for (const [i, item] of node.slice(0, 3).entries()) walk(item, `${path}[${i}]`, depth + 1);
+      return;
+    }
+
+    for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+      walk(value, path ? `${path}.${key}` : key, depth + 1);
+    }
+  };
+
+  walk(root, '', 0);
+  return lines;
+}
+
+/**
+ * Classes CSS les plus fréquentes sur les éléments répétés d'une page.
+ * Sert à calibrer les sélecteurs des sites dont le HTML n'a pas pu être
+ * inspecté en amont : un site d'annonces répète la classe de ses cartes.
+ */
+export async function describeRepeatedClasses(page: Page, top = 15): Promise<string[]> {
+  return page
+    .evaluate((limit) => {
+      const counts = new Map<string, number>();
+      for (const el of Array.from(document.querySelectorAll('[class]'))) {
+        for (const cls of el.className.toString().split(/\s+/)) {
+          if (!cls || cls.length > 40) continue;
+          counts.set(cls, (counts.get(cls) ?? 0) + 1);
+        }
+      }
+      return [...counts.entries()]
+        .filter(([, n]) => n >= 4 && n <= 200)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(([cls, n]) => `${cls} (${n}×)`);
+    }, top)
+    .catch(() => []);
+}
+
 async function fileExists(p: string): Promise<boolean> {
   try {
     await fs.access(p);

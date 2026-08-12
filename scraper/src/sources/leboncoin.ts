@@ -1,6 +1,14 @@
 import type { Browser, Page } from 'playwright';
 import type { RawListing, Source, SourceResult } from '../types.js';
-import { deepCollect, dumpPage, humanDelay, launchBrowser, newContext } from '../util/browser.js';
+import {
+  deepCollect,
+  describeJsonShape,
+  describeRepeatedClasses,
+  dumpPage,
+  humanDelay,
+  launchBrowser,
+  newContext,
+} from '../util/browser.js';
 import { parsePostalCode, parsePriceEur } from '../util/text.js';
 
 /**
@@ -119,6 +127,7 @@ export class LeboncoinSource implements Source {
 
             if (pageNum === 1 && query === QUERIES[0].trim()) {
               await dumpPage(page, 'leboncoin-page1');
+              await logPageDiagnostics(page, fromPage.length);
             }
 
             // Aucun résultat sur cette page : inutile de demander la suivante.
@@ -170,6 +179,50 @@ async function looksBlocked(page: Page): Promise<boolean> {
   if (/(just a moment|verification|acces refuse|access denied|blocked)/i.test(title)) return true;
   const bodyText = (await page.locator('body').innerText().catch(() => '')).slice(0, 400).toLowerCase();
   return /(vérifi|verifi).{0,30}(navigateur|humain)|datadome|captcha/i.test(bodyText);
+}
+
+/**
+ * Imprime dans les logs ce que la page contient réellement.
+ *
+ * Les parseurs ont été écrits sans accès au site ; ce diagnostic remplace
+ * l'inspection manuelle : il dit où sont les annonces et sous quelle forme,
+ * directement dans la sortie du run.
+ */
+async function logPageDiagnostics(page: Page, extracted: number): Promise<void> {
+  console.log('    ┌─ diagnostic Leboncoin');
+  console.log(`    │ url    : ${page.url()}`);
+  console.log(`    │ titre  : ${await page.title().catch(() => '?')}`);
+  console.log(`    │ extrait: ${extracted} annonces via __NEXT_DATA__`);
+
+  const payload = await page
+    .evaluate(() => document.querySelector('#__NEXT_DATA__')?.textContent ?? null)
+    .catch(() => null);
+
+  if (!payload) {
+    console.log('    │ __NEXT_DATA__ : ABSENT');
+    const classes = await describeRepeatedClasses(page);
+    console.log(`    │ classes répétées : ${classes.join(', ') || '(aucune)'}`);
+    // Sans état Next.js, il reste peut-être des données dans un autre script.
+    const scripts = await page
+      .evaluate(() =>
+        Array.from(document.querySelectorAll('script'))
+          .map((s) => (s.textContent ?? '').slice(0, 60))
+          .filter((t) => /list_id|"ads"|adverts|listing/i.test(t))
+          .slice(0, 5),
+      )
+      .catch(() => []);
+    console.log(`    │ scripts suspects : ${scripts.length}`);
+  } else {
+    console.log(`    │ __NEXT_DATA__ : ${(payload.length / 1024).toFixed(0)} Ko`);
+    try {
+      for (const line of describeJsonShape(JSON.parse(payload))) {
+        console.log(`    │   ${line}`);
+      }
+    } catch {
+      console.log('    │   (JSON illisible)');
+    }
+  }
+  console.log('    └─');
 }
 
 async function extractFromNextData(page: Page): Promise<LbcAd[]> {

@@ -138,7 +138,43 @@ function parseSearchPage(html: string, site: SiteConfig): RawListing[] {
   const fromJsonLd = parseJsonLd($, site);
   if (fromJsonLd.length > 0) return fromJsonLd;
 
-  return parseWithSelectors($, site);
+  const fromSelectors = parseWithSelectors($, site);
+  if (fromSelectors.length === 0) logPageDiagnostics($, site, html);
+  return fromSelectors;
+}
+
+/**
+ * Décrit la page quand aucune voie n'a rien donné.
+ *
+ * Le HTML de ces sites n'a pas pu être inspecté pendant le développement ;
+ * ce résumé, imprimé dans les logs, indique quelles classes sont répétées
+ * (donc probablement celles des cartes d'annonce) sans avoir à télécharger
+ * l'archive HTML.
+ */
+function logPageDiagnostics($: cheerio.CheerioAPI, site: SiteConfig, html: string): void {
+  const counts = new Map<string, number>();
+  $('[class]').each((_, el) => {
+    for (const cls of ($(el).attr('class') ?? '').split(/\s+/)) {
+      if (!cls || cls.length > 40) continue;
+      counts.set(cls, (counts.get(cls) ?? 0) + 1);
+    }
+  });
+
+  const repeated = [...counts.entries()]
+    .filter(([, n]) => n >= 4 && n <= 200)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 15)
+    .map(([cls, n]) => `${cls} (${n}×)`);
+
+  const jsonLd = $('script[type="application/ld+json"]').length;
+  const links = $('a[href]').length;
+
+  console.log(`    ┌─ diagnostic ${site.name}`);
+  console.log(`    │ taille HTML   : ${(html.length / 1024).toFixed(0)} Ko`);
+  console.log(`    │ titre         : ${$('title').first().text().trim().slice(0, 80)}`);
+  console.log(`    │ scripts JSON-LD : ${jsonLd} · liens : ${links}`);
+  console.log(`    │ classes répétées : ${repeated.join(', ') || '(aucune)'}`);
+  console.log('    └─');
 }
 
 /** Voie n°1 : données structurées schema.org. */
