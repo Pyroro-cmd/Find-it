@@ -5,6 +5,11 @@ name: Sonde de reconnaissance
 # forme — plutôt que de deviner les URL et les sélecteurs.
 on:
   workflow_dispatch:
+    inputs:
+      tout:
+        description: 'Rejouer aussi les sondes larges (quels sites répondent)'
+        type: boolean
+        default: false
 
 jobs:
   sonde:
@@ -21,11 +26,16 @@ jobs:
         run: npm ci
       - working-directory: scraper
         run: npx playwright install --with-deps chromium
+      - name: Sonde des moteurs de recherche
+        working-directory: scraper
+        run: npm run probe:search
+
       - name: Sonde large — quels sites répondent
+        if: always() && inputs.tout
         working-directory: scraper
         run: npm run probe
 
       - name: Sonde approfondie — structure des pages de résultats
-        if: always()
+        if: always() && inputs.tout
         working-directory: scraper
         run: npm run probe:deep

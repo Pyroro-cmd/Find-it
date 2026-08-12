@@ -59,9 +59,15 @@ export class TheYachtMarketSource implements Source {
         try {
           const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
           if (response && response.status() >= 400) {
-            errors.push(`page ${pageNum} : HTTP ${response.status()}`);
-            if (pageNum === 1) await diagnosePage(page, 'tym-refus');
-            break;
+            // Cloudflare répond 403 puis exécute un test JavaScript qui, une
+            // fois passé, recharge la vraie page. Attendre coûte quinze
+            // secondes et peut suffire ; abandonner tout de suite, non.
+            const passe = await attendreChallenge(page);
+            if (!passe) {
+              errors.push(`page ${pageNum} : HTTP ${response.status()} (protection Cloudflare)`);
+              if (pageNum === 1) await diagnosePage(page, 'tym-refus');
+              break;
+            }
           }
           await page.waitForTimeout(1800);
 
@@ -156,6 +162,24 @@ async function submitSearch(page: Page): Promise<boolean> {
     } catch {
       // bouton masqué ou intercepté : on essaie le candidat suivant
     }
+  }
+  return false;
+}
+
+/**
+ * Attend qu'un test anti-bot Cloudflare se résolve de lui-même.
+ *
+ * La page de test s'intitule « Just a moment… » et ne contient aucune annonce.
+ * Si elle laisse la place au contenu réel, on continue ; sinon on rend la main
+ * plutôt que de mouliner.
+ */
+async function attendreChallenge(page: Page, timeoutMs = 20_000): Promise<boolean> {
+  const echeance = Date.now() + timeoutMs;
+  while (Date.now() < echeance) {
+    await page.waitForTimeout(2500);
+    const titre = await page.title().catch(() => '');
+    if (/just a moment|un instant|checking your browser/i.test(titre)) continue;
+    if ((await page.locator('[class~="info-col"]').count().catch(() => 0)) > 0) return true;
   }
   return false;
 }

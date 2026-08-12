@@ -2,7 +2,14 @@ import type { Browser, Page } from 'playwright';
 import * as cheerio from 'cheerio';
 import type { Element } from 'domhandler';
 import type { RawListing, Source, SourceResult } from '../types.js';
-import { diagnosePage, dumpPage, humanDelay, launchBrowser, newContext } from '../util/browser.js';
+import {
+  describeForms,
+  diagnosePage,
+  dumpPage,
+  humanDelay,
+  launchBrowser,
+  newContext,
+} from '../util/browser.js';
 
 /**
  * boat24.com — première source du projet.
@@ -69,19 +76,30 @@ export class Boat24Source implements Source {
 
           if (pageNum === 1) await dumpPage(page, 'boat24-page1');
 
-          const found = parseListingPage(await page.content());
+          const { listings: found, cardsSeen } = parsePage(await page.content());
           const before = byId.size;
           for (const listing of found) {
             if (!byId.has(listing.sourceId)) byId.set(listing.sourceId, listing);
           }
           const added = byId.size - before;
 
-          console.log(`    boat24 page ${pageNum} : ${found.length} cartes, ${added} nouvelles`);
+          console.log(
+            `    boat24 page ${pageNum} : ${cardsSeen} cartes vues, ${found.length} retenues, ${added} nouvelles`,
+          );
 
-          // Zéro carte sur la première page = sélecteur périmé ou page de
-          // blocage. Le diagnostic part dans le journal du run, seul endroit
-          // consultable depuis l'environnement de développement.
-          if (found.length === 0 && pageNum === 1) await diagnosePage(page, 'boat24');
+          // Deux pannes très différentes se ressemblent quand on ne compte que
+          // les annonces retenues : le sélecteur qui ne trouve plus rien, et la
+          // page pleine de yachts hors budget. D'où les deux compteurs, et un
+          // diagnostic ciblé dans le journal du run — seul endroit consultable
+          // depuis l'environnement de développement.
+          if (cardsSeen === 0 && pageNum === 1) {
+            await diagnosePage(page, 'boat24');
+          } else if (found.length === 0 && pageNum === 1) {
+            console.log(
+              '    boat24 : des cartes, mais aucune dans le budget — relevé du formulaire de recherche',
+            );
+            await describeForms(page, 'boat24');
+          }
 
           // Si la pagination n'est pas prise en compte par le site, la page 2
           // renvoie les mêmes annonces : on s'arrête plutôt que de boucler.
@@ -125,16 +143,30 @@ function rot13(input: string): string {
   });
 }
 
+export type PageParse = {
+  listings: RawListing[];
+  /** Cartes trouvées avant filtrage — distingue « sélecteur périmé » de « rien dans le budget ». */
+  cardsSeen: number;
+};
+
 export function parseListingPage(html: string): RawListing[] {
+  return parsePage(html).listings;
+}
+
+export function parsePage(html: string): PageParse {
   const $ = cheerio.load(html);
   const listings: RawListing[] = [];
+  let cardsSeen = 0;
 
-  $('[class~="blurb"]').each((_, el) => {
+  // Une carte est un `blurb` qui porte le lien : le site réutilise la classe
+  // `blurb` pour des blocs décoratifs, mais eux n'ont pas de `data-link`.
+  $('[class~="blurb"][data-link]').each((_, el) => {
+    cardsSeen += 1;
     const listing = parseCard($, el);
     if (listing) listings.push(listing);
   });
 
-  return listings;
+  return { listings, cardsSeen };
 }
 
 function parseCard($: cheerio.CheerioAPI, el: Element): RawListing | null {

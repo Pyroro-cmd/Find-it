@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test --import tsx test/*.test.ts",
     "probe": "tsx src/probe.ts",
-    "probe:deep": "tsx src/probe-deep.ts"
+    "probe:deep": "tsx src/probe-deep.ts",
+    "probe:search": "tsx src/probe-search.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

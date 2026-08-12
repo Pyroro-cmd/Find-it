@@ -157,6 +157,47 @@ export async function diagnosePage(page: Page, label: string): Promise<void> {
 }
 
 /**
+ * Décrit les formulaires d'une page : action, méthode, champs et premières
+ * options des listes déroulantes.
+ *
+ * Sans les noms de paramètres, impossible de demander « voiliers de plus de
+ * 10 m à moins de 20 000 € » — il faudrait parcourir des milliers d'annonces
+ * pour les écarter après coup. Ce relevé, imprimé dans le journal du run, donne
+ * ces noms en une exécution.
+ */
+export async function describeForms(page: Page, label: string): Promise<void> {
+  const forms = await page
+    .evaluate(() =>
+      Array.from(document.querySelectorAll('form')).map((form) => ({
+        action: form.getAttribute('action') ?? '',
+        method: form.getAttribute('method') ?? 'get',
+        champs: Array.from(form.querySelectorAll('input, select')).map((el) => {
+          const name = el.getAttribute('name') ?? el.getAttribute('id') ?? '?';
+          const type = el.getAttribute('type') ?? el.tagName.toLowerCase();
+          const options =
+            el.tagName === 'SELECT'
+              ? Array.from(el.querySelectorAll('option'))
+                  .slice(0, 6)
+                  .map((o) => o.getAttribute('value') ?? '')
+                  .join('|')
+              : '';
+          return options ? `${name}(${type}: ${options})` : `${name}(${type})`;
+        }),
+      })),
+    )
+    .catch(() => [] as Array<{ action: string; method: string; champs: string[] }>);
+
+  for (const [i, form] of forms.entries()) {
+    if (form.champs.length === 0) continue;
+    console.log(
+      `    [form ${label} #${i}] ${form.method.toUpperCase()} ${form.action} — ${form.champs
+        .slice(0, 40)
+        .join(', ')}`,
+    );
+  }
+}
+
+/**
  * Classes CSS les plus fréquentes sur les éléments répétés d'une page.
  * Sert à calibrer les sélecteurs des sites dont le HTML n'a pas pu être
  * inspecté en amont : un site d'annonces répète la classe de ses cartes.
