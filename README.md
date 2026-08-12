@@ -87,10 +87,9 @@ favoris, sans vous gêner.
 
 ## Ce que ça fait, concrètement
 
-- **Collecte** chaque matin sur [boat24.com](https://www.boat24.com/fr/voiliers/)
-  et [theyachtmarket.com](https://www.theyachtmarket.com/fr/) — voir
-  « Les sources » plus bas pour ce qui a été mesuré, et pourquoi Leboncoin n'y
-  figure pas.
+- **Collecte** chaque matin sur [yachtall.com](https://www.yachtall.com/fr/voiliers)
+  et [boat24.com](https://www.boat24.com/fr/voiliers/) — voir « Les sources »
+  plus bas pour ce qui a été mesuré, et pourquoi Leboncoin n'y figure pas.
 - **Accumule au lieu d'effacer.** L'historique permet de repérer les nouveautés
   du jour, de détecter les **baisses de prix** (un vendeur qui baisse est un
   vendeur motivé) et de voir quelles annonces ont disparu.
@@ -121,10 +120,18 @@ favoris, sans vous gêner.
 GitHub n'exécute les tâches planifiées que depuis la branche par défaut : tant
 que ce code vit sur une branche, la collecte de 8 h ne se déclenchera pas.
 
-### 2. Rien d'autre
+### 2. Activer GitHub Pages — une fois, à la main
 
-Au premier passage, le workflow active GitHub Pages tout seul et publie le
-site. L'adresse sera :
+**Settings → Pages → Source « Deploy from a branch » → branche `gh-pages`,
+dossier `/ (root)`.**
+
+C'est la seule chose qu'un robot ne peut pas faire à votre place : le jeton
+d'un workflow n'a pas le droit d'activer Pages (`Resource not accessible by
+integration`). Une fois cette case cochée, plus rien à faire — le workflow
+reconstruit et republie la branche `gh-pages` à chaque collecte, et vérifie
+lui-même que l'adresse répond.
+
+L'adresse est :
 
 ```
 https://pyroro-cmd.github.io/Find-it/
@@ -169,10 +176,31 @@ parseur. Les constats ci-dessous sont donc des relevés, pas des suppositions.
 
 | Site | Résultat du sondage | Statut |
 |---|---|---|
-| **boat24.com** | > 4 000 voiliers, en français, dimensions / année / pays / prix lisibles dans la carte | **source principale** |
-| **theyachtmarket.com** | aperçu `2002 \| 51'7" \| Diesel \| Voile` : année, longueur et type explicites | **seconde source** |
-| **leboncoin.fr** | HTTP 403 en `fetch` **et** en Chromium piloté | **désactivé** |
+| **yachtall.com** | 200, et **tout est écrit en clair sur des étiquettes françaises** | **source principale** |
+| **boat24.com** | 200 sur la rubrique, mais 403 sur toute URL portant des paramètres — donc aucun filtrage possible | **source d'appoint** |
+| **theyachtmarket.com** | test JavaScript Cloudflare sur les résultats | **désactivé** |
+| **leboncoin.fr** | 403 en `fetch` **et** en Chromium piloté (DataDome) | **désactivé** |
+| **annoncesbateau, bateaux24, youboat** | 403, pare-feu applicatif, dès la première requête | écartés |
 | **Facebook Marketplace** | même barrage, plus le risque de perdre le compte | **désactivé** |
+
+### Ce que yachtall donne, et pourquoi ça change tout
+
+Chaque carte de résultat contient ceci, en toutes lettres :
+
+```
+Voilier / yacht à voile: Sunrise, bateau d'occasion, bateau en acier
+Longueur x largeur: 18,88 m x 4,88 m, construit: 1998, cabines: 2
+Lieu: Monténégro, Bar / Tivat
+Prix: € 490 000, TVA incluse
+```
+
+La longueur est **étiquetée**. Le tri « plus de 10 mètres » devient donc exact
+au lieu de probabiliste — c'est exactement ce que Leboncoin ne permet pas.
+
+Le site ne pagine pas par URL (une adresse à paramètres déclenche sa
+vérification anti-bot) : le collecteur fait défiler la page comme un visiteur
+jusqu'à ce qu'elle cesse de s'allonger. Les annonces les plus récentes venant
+en premier, c'est la bonne fenêtre pour une veille quotidienne.
 
 ### Pourquoi Leboncoin n'y est pas
 
@@ -227,7 +255,7 @@ expose ce compte à une suspension**. Si vous l'activez :
 cd scraper
 npm install
 npx playwright install chromium
-npm test              # 41 tests, aucun réseau requis
+npm test              # 50 tests, aucun réseau requis
 npm run typecheck
 npm run scrape        # collecte réelle, écrit le fichier de données
 
@@ -252,6 +280,10 @@ Surchargeables par variable d'environnement, sans toucher au code :
 
 | Variable | Défaut | Effet |
 |---|---|---|
+| `YA_MAX_ANNONCES` | `600` | Annonces chargées par défilement sur yachtall |
+| `YA_MAX_PRICE` | `30000` | Plafond appliqué à la collecte |
+| `YA_MIN_LENGTH` | `8` | Plancher de longueur, en mètres |
+| `FINDIT_DISABLE_YACHTALL` | — | `1` coupe la source |
 | `B24_MAX_PAGES` | `12` | Pages parcourues sur boat24 |
 | `B24_MAX_PRICE` | `30000` | Plafond appliqué à la collecte |
 | `B24_MIN_LENGTH` | `8` | Plancher de longueur, en mètres |
