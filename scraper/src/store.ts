@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { EnrichedListing } from './types.js';
 
 /**
@@ -16,7 +17,18 @@ import type { EnrichedListing } from './types.js';
  * statique : le collecteur écrit, le site lit, rien entre les deux.
  */
 
-export const DATA_FILE = process.env.FINDIT_DATA_FILE ?? 'web/public/data/listings.json';
+/**
+ * Chemin déduit de l'emplacement de ce fichier, et non du répertoire courant.
+ *
+ * La collecte tourne depuis `scraper/` : un chemin relatif écrivait donc dans
+ * `scraper/web/public/data/`, un dossier fantôme que personne ne lit. Le site
+ * recevait le fichier vide du dépôt sans que rien n'échoue — la panne la plus
+ * coûteuse à diagnostiquer, celle qui ressemble à un succès.
+ */
+const RACINE_DEPOT = fileURLToPath(new URL('../../', import.meta.url));
+
+export const DATA_FILE =
+  process.env.FINDIT_DATA_FILE ?? path.join(RACINE_DEPOT, 'web/public/data/listings.json');
 
 /** Au-delà, une annonce disparue n'apprend plus rien et alourdit le fichier. */
 const KEEP_GONE_DAYS = 60;
