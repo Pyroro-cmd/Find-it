@@ -1,0 +1,25 @@
+name: Sonde de reconnaissance
+
+# Lancée à la main. Sert à découvrir, depuis une machine qui a réellement
+# accès à Internet, quels sites d'annonces sont exploitables et sous quelle
+# forme — plutôt que de deviner les URL et les sélecteurs.
+on:
+  workflow_dispatch:
+
+jobs:
+  sonde:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+      - working-directory: scraper
+        run: npm ci
+      - working-directory: scraper
+        run: npx playwright install --with-deps chromium
+      - working-directory: scraper
+        run: npm run probe

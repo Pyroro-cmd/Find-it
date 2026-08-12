@@ -101,7 +101,7 @@ jobs:
           FINDIT_TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
           FINDIT_DEBUG_DUMP: ${{ inputs.debug_dump && '1' || '0' }}
           FINDIT_ENABLE_FACEBOOK: ${{ inputs.enable_facebook && '1' || '0' }}
-          FINDIT_ARTIFACT_DIR: ${{ github.workspace }}/scraper/.artifacts
+          FINDIT_ARTIFACT_DIR: ${{ github.workspace }}/scraper/artifacts
         working-directory: scraper
         run: npm run scrape
 
@@ -141,7 +141,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pages-collectees
-          path: scraper/.artifacts/
+          path: scraper/artifacts/
           retention-days: 7
           if-no-files-found: ignore
 

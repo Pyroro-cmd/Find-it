@@ -15,8 +15,8 @@ dist/
 fb-session.json
 
 # Artefacts de debug du scraper
-.artifacts/
-scraper/.artifacts/
+artifacts/
+scraper/artifacts/
 
 # Système
 .DS_Store
