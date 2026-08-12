@@ -21,5 +21,11 @@ jobs:
         run: npm ci
       - working-directory: scraper
         run: npx playwright install --with-deps chromium
-      - working-directory: scraper
+      - name: Sonde large — quels sites répondent
+        working-directory: scraper
         run: npm run probe
+
+      - name: Sonde approfondie — structure des pages de résultats
+        if: always()
+        working-directory: scraper
+        run: npm run probe:deep
