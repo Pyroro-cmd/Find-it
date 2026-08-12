@@ -47,6 +47,7 @@ async function main(): Promise<void> {
         console.log(`  cartes « ${cible.carte} » : ${await page.locator(`[class~="${cible.carte}"]`).count()}`);
 
         await relevePagination(page);
+        await releveControlesPagination(page);
         await releveCarte(page, cible.carte);
       } catch (error) {
         console.log(`  échec : ${(error as Error).message.slice(0, 160)}`);
@@ -77,21 +78,66 @@ async function relevePagination(page: Page): Promise<void> {
   if (liens.length === 0) console.log('    aucun — la pagination est probablement en JavaScript');
 }
 
+/**
+ * Les commandes de pagination quand elles ne sont pas de simples liens.
+ *
+ * Si la page suivante s'obtient par un clic et non par une URL, le collecteur
+ * peut très bien cliquer — mais il lui faut le sélecteur exact.
+ */
+async function releveControlesPagination(page: Page): Promise<void> {
+  const releve = await page.evaluate(() => {
+    const sortie: string[] = [];
+
+    for (const el of Array.from(document.querySelectorAll('[class*="pag" i], [id*="pag" i]'))) {
+      sortie.push(`conteneur : ${el.outerHTML.replace(/\s+/g, ' ').slice(0, 600)}`);
+      if (sortie.length > 4) break;
+    }
+
+    for (const el of Array.from(document.querySelectorAll('button, [role="button"], input[type="button"]'))) {
+      const texte = (el.textContent ?? (el as HTMLInputElement).value ?? '').replace(/\s+/g, ' ').trim();
+      if (!texte || texte.length > 30) continue;
+      if (/suivant|next|plus|more|charger|weiter|»|›|\d+/i.test(texte)) {
+        sortie.push(`bouton « ${texte} » : ${el.outerHTML.replace(/\s+/g, ' ').slice(0, 220)}`);
+      }
+    }
+
+    return sortie;
+  });
+
+  console.log('  commandes de pagination :');
+  for (const ligne of [...new Set(releve)].slice(0, 12)) console.log(`    ${ligne}`);
+  if (releve.length === 0) console.log('    aucune');
+
+  // Le bas de page contient presque toujours la pagination.
+  const bas = await page.evaluate(() => document.body.innerHTML.slice(-2500).replace(/\s+/g, ' '));
+  console.log(`  bas du document : ${bas}`);
+}
+
 /** Structure complète d'une carte : de quoi écrire le parseur sans deviner. */
 async function releveCarte(page: Page, classe: string): Promise<void> {
+  // On remonte jusqu'à l'ancêtre qui contient un prix : c'est la carte
+  // complète, pas seulement le lien du titre.
   const html = await page
     .evaluate((cls) => {
       const cartes = Array.from(document.querySelectorAll(`[class~="${cls}"]`));
-      const avecPrix = cartes.find((el) => /€/.test((el as HTMLElement).innerText ?? ''));
-      return (avecPrix ?? cartes[0])?.outerHTML ?? '';
+      let noeud: HTMLElement | null = (cartes[0] as HTMLElement) ?? null;
+      for (let i = 0; i < 5 && noeud; i++) {
+        if (/€/.test(noeud.innerText ?? '')) break;
+        noeud = noeud.parentElement;
+      }
+      return noeud?.outerHTML ?? '';
     }, classe)
     .catch(() => '');
 
   const texte = await page
     .evaluate((cls) => {
       const cartes = Array.from(document.querySelectorAll(`[class~="${cls}"]`));
-      const avecPrix = cartes.find((el) => /€/.test((el as HTMLElement).innerText ?? ''));
-      return ((avecPrix ?? cartes[0]) as HTMLElement | undefined)?.innerText ?? '';
+      let noeud: HTMLElement | null = (cartes[0] as HTMLElement) ?? null;
+      for (let i = 0; i < 5 && noeud; i++) {
+        if (/€/.test(noeud.innerText ?? '')) break;
+        noeud = noeud.parentElement;
+      }
+      return noeud?.innerText ?? '';
     }, classe)
     .catch(() => '');
 
