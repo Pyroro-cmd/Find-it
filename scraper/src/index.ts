@@ -1,25 +1,37 @@
-import { finishRun, loadExisting, markGone, startRun, upsertListings } from './db.js';
 import { enrichAll, isPlausibleBoatListing } from './pipeline.js';
 import { FacebookSource } from './sources/facebook.js';
 import { LeboncoinSource } from './sources/leboncoin.js';
 import { SpecializedSitesSource } from './sources/specialized.js';
+import {
+  keyOf,
+  loadDataset,
+  mergeListings,
+  saveDataset,
+  type RunReport,
+  type StoredListing,
+} from './store.js';
 import type { RawListing, Source, SourceResult } from './types.js';
 
 /**
  * Point d'entrée de la collecte quotidienne.
  *
  * Principe de robustesse : une source qui tombe ne fait pas tomber les autres,
- * et le run se termine en « partial » plutôt qu'en échec. Sur du scraping,
- * la panne partielle est le régime normal, pas l'exception.
+ * et le run se termine en « partiel » plutôt qu'en échec. Sur du scraping, la
+ * panne partielle est le régime normal, pas l'exception.
+ *
+ * Autre garde-fou important : si AUCUNE annonce n'est collectée, le fichier
+ * existant n'est pas réécrit. Un site momentanément inaccessible ne doit pas
+ * effacer des semaines d'historique.
  */
 
 async function main(): Promise<void> {
-  const runStart = new Date().toISOString();
+  const startedAt = new Date().toISOString();
   const trigger = process.env.FINDIT_TRIGGER ?? 'manual';
 
-  console.log(`\n=== Find-it — collecte du ${runStart} (${trigger}) ===\n`);
+  console.log(`\n=== Find-it — collecte du ${startedAt} (${trigger}) ===\n`);
 
-  const runId = await startRun(trigger);
+  const dataset = await loadDataset();
+  console.log(`Historique chargé : ${dataset.listings.length} annonces connues\n`);
 
   const sources: Source[] = [
     new LeboncoinSource(),
@@ -38,17 +50,16 @@ async function main(): Promise<void> {
     }
 
     console.log(`— ${source.name} : collecte…`);
-    const startedAt = Date.now();
+    const t0 = Date.now();
     try {
       const result = await source.collect();
       results.push(result);
-      const seconds = Math.round((Date.now() - startedAt) / 1000);
+      const seconds = Math.round((Date.now() - t0) / 1000);
       console.log(
         `  ${result.listings.length} annonces en ${seconds}s` +
           (result.errors.length ? ` — ${result.errors.length} avertissement(s)` : ''),
       );
       for (const error of result.errors) console.log(`    ! ${error}`);
-
       sourceReport[source.name] = {
         count: result.listings.length,
         errors: result.errors,
@@ -66,57 +77,69 @@ async function main(): Promise<void> {
   const rawListings = dedupe(results.flatMap((r) => r.listings));
   const relevant = rawListings.filter(isPlausibleBoatListing);
   console.log(
-    `\nAnnonces collectées : ${rawListings.length} (dont ${rawListings.length - relevant.length} écartées comme hors sujet)`,
+    `\nAnnonces collectées : ${rawListings.length}` +
+      ` (dont ${rawListings.length - relevant.length} écartées comme hors sujet)`,
   );
 
   if (relevant.length === 0) {
-    console.warn('Aucune annonce exploitable — rien à écrire.');
-    await finishRun(runId, 'failed', { collected: 0 }, sourceReport, 'aucune annonce collectée');
+    console.warn(
+      "\nAucune annonce exploitable. Le fichier existant n'est PAS modifié — " +
+        'une panne de source ne doit pas effacer l\'historique.',
+    );
+    // Le run est tout de même journalisé, pour que le site affiche l'incident.
+    if (dataset.listings.length > 0) {
+      await saveDataset(dataset, {
+        startedAt,
+        finishedAt: new Date().toISOString(),
+        status: 'failed',
+        trigger,
+        stats: { collected: 0 },
+        sources: sourceReport,
+      });
+    }
     process.exitCode = 1;
     return;
   }
 
   // --- Enrichissement -------------------------------------------------------
-  const collectedSources = [...new Set(relevant.map((l) => l.source))];
-  const existing = await loadExisting(collectedSources);
+  const existing = new Map<string, StoredListing>(
+    dataset.listings.map((l) => [keyOf(l.source, l.sourceId), l]),
+  );
 
   console.log('\nEnrichissement…');
   const { listings, stats } = await enrichAll(relevant, existing);
   console.log(
     `  longueur trouvée pour ${stats.withLength}/${stats.total} ` +
-      `(regex ${stats.fromRegex}, modèle ${stats.fromModelTable}, LLM ${stats.fromLlm}) — ` +
+      `(regex ${stats.fromRegex}, modèle ${stats.fromModelTable}, IA ${stats.fromLlm}) — ` +
       `${stats.unresolved} à vérifier`,
   );
 
-  // --- Écriture --------------------------------------------------------------
-  const outcome = await upsertListings(listings, existing);
-  console.log(
-    `\nBase à jour : ${outcome.inserted} nouvelles, ${outcome.updated} mises à jour, ` +
-      `${outcome.priceDrops} baisse(s) de prix`,
-  );
+  // --- Fusion avec l'historique ---------------------------------------------
+  const reachableSources = [
+    ...new Set(results.filter((r) => r.reachable).flatMap((r) => r.listings.map((l) => l.source))),
+  ];
+  const outcome = mergeListings(dataset, listings, reachableSources);
 
-  // --- Annonces disparues ----------------------------------------------------
-  let goneTotal = 0;
-  for (const result of results) {
-    if (!result.reachable || result.listings.length === 0) continue;
-    for (const src of new Set(result.listings.map((l) => l.source))) {
-      const ids = result.listings.filter((l) => l.source === src).map((l) => l.sourceId);
-      goneTotal += await markGone(src, ids, runStart);
-    }
-  }
-  if (goneTotal > 0) console.log(`${goneTotal} annonce(s) marquée(s) comme disparues`);
+  console.log(
+    `\nHistorique à jour : ${outcome.inserted} nouvelles, ${outcome.updated} revues, ` +
+      `${outcome.priceDrops} baisse(s) de prix, ${outcome.gone} disparue(s)` +
+      (outcome.pruned ? `, ${outcome.pruned} purgée(s)` : ''),
+  );
 
   const hadErrors = Object.values(sourceReport).some(
-    (r) => Array.isArray((r as { errors?: unknown[] }).errors) && ((r as { errors: unknown[] }).errors.length > 0),
+    (r) => ((r as { errors?: unknown[] }).errors?.length ?? 0) > 0,
   );
 
-  await finishRun(
-    runId,
-    hadErrors ? 'partial' : 'success',
-    { ...stats, ...outcome, gone: goneTotal, collected: rawListings.length },
-    sourceReport,
-  );
+  const run: RunReport = {
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    status: hadErrors ? 'partial' : 'success',
+    trigger,
+    stats: { ...stats, ...outcome, collected: rawListings.length, total: dataset.listings.length },
+    sources: sourceReport,
+  };
 
+  await saveDataset(dataset, run);
   console.log('\n=== Terminé ===\n');
 }
 
@@ -124,15 +147,15 @@ async function main(): Promise<void> {
 function dedupe(listings: RawListing[]): RawListing[] {
   const seen = new Map<string, RawListing>();
   for (const listing of listings) {
-    const key = `${listing.source}:${listing.sourceId}`;
-    const existing = seen.get(key);
+    const key = keyOf(listing.source, listing.sourceId);
+    const previous = seen.get(key);
     // On garde la version la plus riche (celle qui a une description).
-    if (!existing || (!existing.description && listing.description)) seen.set(key, listing);
+    if (!previous || (!previous.description && listing.description)) seen.set(key, listing);
   }
   return [...seen.values()];
 }
 
-main().catch(async (error) => {
+main().catch((error) => {
   console.error('\nÉchec de la collecte :', error);
   process.exitCode = 1;
 });

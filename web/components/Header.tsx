@@ -1,12 +1,16 @@
-import { formatDateTime } from '@/lib/format';
-import type { ScrapeRun } from '@/lib/types';
+'use client';
 
-export function Header({ run }: { run: ScrapeRun | null }) {
+import { formatDateTime } from '@/lib/format';
+import type { RunReport } from '@/lib/types';
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+
+export function Header({ run, current }: { run: RunReport | null; current: 'accueil' | 'reglages' }) {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <div className="flex items-baseline gap-3">
-          <a href="/" className="text-xl font-semibold tracking-tight">
+          <a href={`${BASE}/`} className="text-xl font-semibold tracking-tight">
             ⛵ Find-it
           </a>
           <span className="hidden text-sm text-text-muted sm:inline">Voiliers, filtrés pour vous</span>
@@ -14,8 +18,11 @@ export function Header({ run }: { run: ScrapeRun | null }) {
 
         <div className="flex items-center gap-4 text-sm">
           <RunStatus run={run} />
-          <a href="/reglages" className="rounded-lg border border-border px-3 py-1.5 hover:border-accent">
-            Critères
+          <a
+            href={current === 'reglages' ? `${BASE}/` : `${BASE}/reglages/`}
+            className="rounded-lg border border-border px-3 py-1.5 hover:border-accent"
+          >
+            {current === 'reglages' ? 'Retour aux annonces' : 'Mes critères'}
           </a>
         </div>
       </div>
@@ -23,30 +30,15 @@ export function Header({ run }: { run: ScrapeRun | null }) {
   );
 }
 
-function RunStatus({ run }: { run: ScrapeRun | null }) {
-  if (!run) {
-    return <span className="text-text-muted">Aucune collecte encore effectuée</span>;
-  }
+function RunStatus({ run }: { run: RunReport | null }) {
+  if (!run) return <span className="hidden text-text-muted sm:inline">Aucune collecte encore effectuée</span>;
 
   const tone =
-    run.status === 'success'
-      ? 'text-good'
-      : run.status === 'partial'
-        ? 'text-warn'
-        : run.status === 'running'
-          ? 'text-text-muted'
-          : 'text-warn';
-
+    run.status === 'success' ? 'text-good' : run.status === 'partial' ? 'text-warn' : 'text-warn';
   const label =
-    run.status === 'success'
-      ? 'à jour'
-      : run.status === 'partial'
-        ? 'partielle'
-        : run.status === 'running'
-          ? 'en cours'
-          : 'en échec';
+    run.status === 'success' ? 'à jour' : run.status === 'partial' ? 'partielle' : 'en échec';
 
-  const failing = Object.entries(run.source_results ?? {})
+  const failing = Object.entries(run.sources ?? {})
     .filter(([, r]) => (r?.errors?.length ?? 0) > 0)
     .map(([name]) => name);
 
@@ -59,7 +51,7 @@ function RunStatus({ run }: { run: ScrapeRun | null }) {
           : 'Toutes les sources ont répondu'
       }
     >
-      Collecte {label} · {formatDateTime(run.finished_at ?? run.started_at)}
+      Collecte {label} · {formatDateTime(run.finishedAt)}
     </span>
   );
 }

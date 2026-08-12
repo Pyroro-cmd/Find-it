@@ -1,0 +1,207 @@
+name: Collecte et publication
+
+on:
+  schedule:
+    # GitHub Actions ne connaît que l'UTC et ignore le changement d'heure.
+    # 8 h à Paris = 06:00 UTC en été (CEST) et 07:00 UTC en hiver (CET).
+    # On déclenche aux deux heures et le job « heure » annule celle qui ne
+    # correspond pas à 8 h heure locale.
+    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      debug_dump:
+        description: 'Archiver le HTML des pages (calibration des sélecteurs)'
+        type: boolean
+        default: false
+      enable_facebook:
+        description: 'Inclure Facebook Marketplace (nécessite une session)'
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/daily.yml'
+
+permissions:
+  contents: write # versionner le fichier de données
+  pages: write # publier le site
+  id-token: write # authentifier le déploiement Pages
+
+# Deux collectes simultanées se marcheraient dessus sur le fichier de données.
+concurrency:
+  group: findit
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Décide si cette exécution doit collecter, et/ou publier.
+  # ---------------------------------------------------------------------------
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      collecter: ${{ steps.decide.outputs.collecter }}
+    steps:
+      - id: decide
+        run: |
+          HEURE_PARIS=$(TZ=Europe/Paris date +%H)
+          echo "Il est ${HEURE_PARIS} h à Paris (événement : ${{ github.event_name }})."
+
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "Modification du site uniquement — publication sans collecte."
+            echo "collecter=false" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "schedule" ] && [ "$HEURE_PARIS" != "08" ]; then
+            echo "Ce déclenchement ne correspond pas à 8 h heure de Paris — on ne fait rien."
+            echo "collecter=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "collecter=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Collecte les annonces et versionne le fichier de données.
+  # ---------------------------------------------------------------------------
+  collecte:
+    needs: plan
+    if: needs.plan.outputs.collecter == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: scraper
+        run: npm ci
+
+      - name: Installer Chromium
+        working-directory: scraper
+        run: npx playwright install --with-deps chromium
+
+      - name: Vérifier les types
+        working-directory: scraper
+        run: npm run typecheck
+
+      - name: Lancer les tests
+        working-directory: scraper
+        run: npm test
+
+      - name: Collecter
+        env:
+          # Aucune clé n'est requise : sans ANTHROPIC_API_KEY, l'extraction se
+          # limite aux regex et à la table de modèles, et le reste part dans
+          # l'onglet « À vérifier ». Le service reste donc entièrement gratuit.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FB_STORAGE_STATE_JSON: ${{ secrets.FB_STORAGE_STATE_JSON }}
+          FINDIT_TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
+          FINDIT_DEBUG_DUMP: ${{ inputs.debug_dump && '1' || '0' }}
+          FINDIT_ENABLE_FACEBOOK: ${{ inputs.enable_facebook && '1' || '0' }}
+          FINDIT_ARTIFACT_DIR: ${{ github.workspace }}/scraper/.artifacts
+        working-directory: scraper
+        run: npm run scrape
+
+      - name: Versionner les annonces
+        run: |
+          git config user.name  "Find-it (collecte)"
+          git config user.email "actions@users.noreply.github.com"
+
+          if git diff --quiet -- web/public/data/listings.json; then
+            echo "Aucun changement dans les annonces — pas de commit."
+            exit 0
+          fi
+
+          NB=$(node -e "const d=require('./web/public/data/listings.json');console.log(d.listings.filter(l=>l.status==='active').length)")
+          git add web/public/data/listings.json
+          git commit -m "Collecte du $(TZ=Europe/Paris date +'%d/%m/%Y') — ${NB} annonces actives"
+
+          # Une autre exécution a pu écrire entre-temps ; on rejoue par-dessus.
+          for tentative in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Push refusé (tentative ${tentative}) — rebase et nouvel essai."
+            git pull --rebase --autostash
+            sleep $((tentative * 3))
+          done
+          echo "::error::Impossible de versionner les annonces après 3 tentatives."
+          exit 1
+
+      - name: Transmettre les annonces à la publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: donnees
+          path: web/public/data/listings.json
+          if-no-files-found: error
+
+      - name: Publier les archives de debug
+        if: always() && inputs.debug_dump
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-collectees
+          path: scraper/.artifacts/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # Construit et publie le site statique sur GitHub Pages.
+  # ---------------------------------------------------------------------------
+  publication:
+    needs: [plan, collecte]
+    # `always()` : on publie aussi quand la collecte a été volontairement
+    # sautée (simple mise à jour du site) ou qu'elle a partiellement échoué —
+    # le site doit rester en ligne et afficher l'incident.
+    if: always() && needs.plan.result == 'success' && needs.collecte.result != 'cancelled'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Récupérer les annonces fraîchement collectées
+        if: needs.collecte.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: donnees
+          path: web/public/data/
+
+      - name: Configurer GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          # Active Pages automatiquement si ce n'est pas déjà fait.
+          enablement: true
+
+      - name: Installer les dépendances
+        working-directory: web
+        run: npm ci
+
+      - name: Construire le site
+        working-directory: web
+        env:
+          # GitHub Pages sert le site sous /<depot>/ : sans ce préfixe, toutes
+          # les ressources pointeraient vers la racine du domaine.
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: npm run build
+
+      - name: Empêcher Jekyll de filtrer les fichiers
+        # Sans ce fichier, GitHub Pages ignore les dossiers commençant par « _ »,
+        # or Next.js met tout son JavaScript dans `_next/`.
+        run: touch web/out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/out
+
+      - name: Déployer
+        id: deploiement
+        uses: actions/deploy-pages@v4

@@ -1,26 +1,45 @@
-import type { Tab } from '@/lib/types';
+'use client';
+
+import { sourceLabel } from '@/lib/format';
+
+export type ViewFilters = {
+  search: string;
+  facade: string;
+  source: string;
+  maxPrice: string;
+  minLength: string;
+};
+
+export const EMPTY_FILTERS: ViewFilters = {
+  search: '',
+  facade: '',
+  source: '',
+  maxPrice: '',
+  minLength: '',
+};
 
 /**
  * Filtres d'affichage, distincts des critères de recherche : ils affinent la
- * vue sans toucher à ce que le collecteur retient. Un simple formulaire GET —
- * l'état vit dans l'URL, donc une vue se partage et se met en favori.
+ * vue courante sans modifier ce qui est retenu comme « correspondant ».
  */
 export function Filters({
-  tab,
   values,
+  sources,
+  onChange,
 }: {
-  tab: Tab;
-  values: { facade?: string; source?: string; maxPrice?: string; minLength?: string; search?: string };
+  values: ViewFilters;
+  sources: string[];
+  onChange: (values: ViewFilters) => void;
 }) {
-  return (
-    <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
-      <input type="hidden" name="vue" value={tab} />
+  const set = (patch: Partial<ViewFilters>) => onChange({ ...values, ...patch });
 
+  return (
+    <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <Field label="Recherche">
         <input
           type="search"
-          name="recherche"
-          defaultValue={values.search ?? ''}
+          value={values.search}
+          onChange={(e) => set({ search: e.target.value })}
           placeholder="Sun Odyssey, ketch…"
           className="w-44 rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         />
@@ -28,8 +47,8 @@ export function Filters({
 
       <Field label="Façade">
         <select
-          name="facade"
-          defaultValue={values.facade ?? ''}
+          value={values.facade}
+          onChange={(e) => set({ facade: e.target.value })}
           className="rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         >
           <option value="">Toutes</option>
@@ -42,25 +61,26 @@ export function Filters({
 
       <Field label="Source">
         <select
-          name="source"
-          defaultValue={values.source ?? ''}
+          value={values.source}
+          onChange={(e) => set({ source: e.target.value })}
           className="rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         >
           <option value="">Toutes</option>
-          <option value="leboncoin">Leboncoin</option>
-          <option value="youboat">Youboat</option>
-          <option value="bateaux-occasion">Bateaux-Occasion</option>
-          <option value="facebook">Facebook</option>
+          {sources.map((source) => (
+            <option key={source} value={source}>
+              {sourceLabel(source)}
+            </option>
+          ))}
         </select>
       </Field>
 
       <Field label="Prix max">
         <input
           type="number"
-          name="prixmax"
           min={0}
           step={500}
-          defaultValue={values.maxPrice ?? ''}
+          value={values.maxPrice}
+          onChange={(e) => set({ maxPrice: e.target.value })}
           placeholder="€"
           className="w-28 rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         />
@@ -69,26 +89,23 @@ export function Filters({
       <Field label="Longueur min">
         <input
           type="number"
-          name="longmin"
           min={0}
           step={0.5}
-          defaultValue={values.minLength ?? ''}
+          value={values.minLength}
+          onChange={(e) => set({ minLength: e.target.value })}
           placeholder="m"
           className="w-24 rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         />
       </Field>
 
       <button
-        type="submit"
-        className="rounded-lg bg-accent px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+        type="button"
+        onClick={() => onChange(EMPTY_FILTERS)}
+        className="px-2 py-1.5 text-sm text-text-muted hover:text-text"
       >
-        Filtrer
-      </button>
-
-      <a href={`/?vue=${tab}`} className="px-2 py-1.5 text-sm text-text-muted hover:text-text">
         Réinitialiser
-      </a>
-    </form>
+      </button>
+    </div>
   );
 }
 

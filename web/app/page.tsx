@@ -1,87 +1,187 @@
-import { Filters } from '@/components/Filters';
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import { EMPTY_FILTERS, Filters, type ViewFilters } from '@/components/Filters';
 import { Header } from '@/components/Header';
 import { ListingCard } from '@/components/ListingCard';
 import { Tabs } from '@/components/Tabs';
-import { fetchCounts, fetchCriteria, fetchLastRun, fetchListings } from '@/lib/queries';
+import {
+  DEFAULT_CRITERIA,
+  decorate,
+  loadCriteria,
+  loadIdSet,
+  saveIdSet,
+  selectForTab,
+} from '@/lib/criteria';
 import { formatLength, formatPrice } from '@/lib/format';
-import type { Tab } from '@/lib/types';
+import { useDataset } from '@/lib/useDataset';
+import type { Criteria, Tab } from '@/lib/types';
 
-// Les données changent une fois par jour, mais les actions (favori, masquer)
-// doivent se voir immédiatement : on rend à la demande, sans cache de page.
-export const dynamic = 'force-dynamic';
+const ALL_TABS: Tab[] = ['nouveautes', 'ideales', 'toutes', 'baisses', 'a-verifier', 'favoris'];
 
-const VALID_TABS: Tab[] = ['nouveautes', 'toutes', 'ideales', 'a-verifier', 'favoris', 'baisses'];
+export default function DashboardPage() {
+  const state = useDataset();
 
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | undefined>>;
-}) {
-  const params = await searchParams;
-  const tab: Tab = VALID_TABS.includes(params.vue as Tab) ? (params.vue as Tab) : 'nouveautes';
+  const [tab, setTab] = useState<Tab>('nouveautes');
+  const [filters, setFilters] = useState<ViewFilters>(EMPTY_FILTERS);
+  const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
 
-  const filters = {
-    tab,
-    facade: params.facade || undefined,
-    source: params.source || undefined,
-    maxPrice: params.prixmax ? Number(params.prixmax) : undefined,
-    minLength: params.longmin ? Number(params.longmin) : undefined,
-    search: params.recherche || undefined,
+  // localStorage n'existe pas au rendu serveur : on ne le lit qu'une fois monté,
+  // sinon le HTML généré et le premier rendu client divergeraient.
+  useEffect(() => {
+    setCriteria(loadCriteria());
+    setFavorites(loadIdSet('favorites'));
+    setHidden(loadIdSet('hidden'));
+  }, []);
+
+  const listings = state.status === 'ready' ? state.dataset.listings : [];
+
+  const decorated = useMemo(
+    () =>
+      listings
+        .filter((l) => !hidden.has(l.id))
+        .map((l) => decorate(l, criteria, favorites))
+        .sort((a, b) => b.score - a.score),
+    [listings, criteria, favorites, hidden],
+  );
+
+  const counts = useMemo(
+    () =>
+      Object.fromEntries(ALL_TABS.map((t) => [t, selectForTab(decorated, t).length])) as Record<Tab, number>,
+    [decorated],
+  );
+
+  const sources = useMemo(() => [...new Set(listings.map((l) => l.source))].sort(), [listings]);
+
+  const visible = useMemo(() => {
+    let result = selectForTab(decorated, tab);
+
+    if (filters.search.trim()) {
+      const needle = filters.search.trim().toLowerCase();
+      result = result.filter(
+        (l) =>
+          l.title.toLowerCase().includes(needle) ||
+          (l.description ?? '').toLowerCase().includes(needle),
+      );
+    }
+    if (filters.facade) result = result.filter((l) => l.facade === filters.facade);
+    if (filters.source) result = result.filter((l) => l.source === filters.source);
+    if (filters.maxPrice) {
+      const max = Number(filters.maxPrice);
+      result = result.filter((l) => l.priceEur != null && l.priceEur <= max);
+    }
+    if (filters.minLength) {
+      const min = Number(filters.minLength);
+      result = result.filter((l) => l.lengthM != null && l.lengthM >= min);
+    }
+
+    return result;
+  }, [decorated, tab, filters]);
+
+  const toggleFavorite = (id: string) => {
+    setFavorites((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      saveIdSet('favorites', next);
+      return next;
+    });
   };
 
-  const [listings, counts, criteria, run] = await Promise.all([
-    fetchListings(filters),
-    fetchCounts(),
-    fetchCriteria(),
-    fetchLastRun(),
-  ]);
+  const hide = (id: string) => {
+    setHidden((previous) => {
+      const next = new Set(previous).add(id);
+      saveIdSet('hidden', next);
+      return next;
+    });
+  };
 
   return (
     <>
-      <Header run={run} />
+      <Header run={state.status === 'ready' ? state.dataset.run : null} current="accueil" />
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <Tabs active={tab} counts={counts} query={params} />
-          <p className="text-sm text-text-muted">
-            Critères : plus de {formatLength(criteria.min_length_m)}, moins de{' '}
-            {formatPrice(criteria.max_price_eur)}
-          </p>
-        </div>
+        {state.status === 'loading' ? <Notice>Chargement des annonces…</Notice> : null}
 
-        <div className="mb-6">
-          <Filters
-            tab={tab}
-            values={{
-              facade: params.facade,
-              source: params.source,
-              maxPrice: params.prixmax,
-              minLength: params.longmin,
-              search: params.recherche,
-            }}
-          />
-        </div>
-
-        {tab === 'a-verifier' && listings.length > 0 ? (
-          <p className="mb-4 rounded-lg border border-border bg-warn-soft px-4 py-3 text-sm text-warn">
-            Ces annonces n'indiquent pas leur longueur de façon exploitable, et le modèle n'a pas
-            permis de la déduire avec certitude. Elles ne sont pas écartées pour autant : mieux vaut
-            en vérifier quelques-unes à la main que rater le bon bateau.
-          </p>
+        {state.status === 'error' ? (
+          <Notice tone="warn">
+            Impossible de charger les annonces ({state.message}). Le fichier de données n'est
+            peut-être pas encore publié — relancez la collecte depuis l'onglet Actions du dépôt.
+          </Notice>
         ) : null}
 
-        {listings.length === 0 ? (
-          <EmptyState tab={tab} />
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        )}
+        {state.status === 'empty' ? (
+          <Notice>
+            Aucune donnée pour l'instant. La première collecte n'a pas encore tourné : elle est
+            programmée chaque matin à 8 h, et peut être déclenchée à la main depuis l'onglet
+            Actions du dépôt GitHub.
+          </Notice>
+        ) : null}
+
+        {state.status === 'ready' ? (
+          <>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <Tabs active={tab} counts={counts} onChange={setTab} />
+              <p className="text-sm text-text-muted">
+                Vos critères : plus de {formatLength(criteria.minLengthM)}, moins de{' '}
+                {formatPrice(criteria.maxPriceEur)}
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <Filters values={filters} sources={sources} onChange={setFilters} />
+            </div>
+
+            {tab === 'a-verifier' && visible.length > 0 ? (
+              <Notice tone="warn">
+                Ces annonces n'indiquent pas leur longueur de façon exploitable, et le modèle n'a
+                pas permis de la déduire avec certitude. Elles ne sont pas écartées pour autant :
+                mieux vaut en vérifier quelques-unes à la main que rater le bon bateau.
+              </Notice>
+            ) : null}
+
+            {visible.length === 0 ? (
+              <EmptyState tab={tab} />
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {visible.map((listing) => (
+                  <ListingCard
+                    key={listing.id}
+                    listing={listing}
+                    onToggleFavorite={toggleFavorite}
+                    onHide={hide}
+                  />
+                ))}
+              </div>
+            )}
+
+            {hidden.size > 0 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setHidden(new Set());
+                  saveIdSet('hidden', new Set());
+                }}
+                className="mt-6 text-sm text-text-muted underline hover:text-text"
+              >
+                Réafficher les {hidden.size} annonce(s) masquée(s)
+              </button>
+            ) : null}
+          </>
+        ) : null}
       </main>
     </>
   );
+}
+
+function Notice({ children, tone = 'neutral' }: { children: React.ReactNode; tone?: 'neutral' | 'warn' }) {
+  const classes =
+    tone === 'warn'
+      ? 'border-border bg-warn-soft text-warn'
+      : 'border-border bg-surface text-text-muted';
+  return <p className={`mb-4 rounded-lg border px-4 py-3 text-sm ${classes}`}>{children}</p>;
 }
 
 function EmptyState({ tab }: { tab: Tab }) {
@@ -89,11 +189,11 @@ function EmptyState({ tab }: { tab: Tab }) {
     nouveautes:
       "Aucune nouvelle annonce depuis 24 h. C'est normal certains jours : le marché du voilier d'occasion est lent. Regardez « Toutes » pour l'ensemble des annonces retenues.",
     toutes:
-      "Aucune annonce ne correspond à vos critères pour l'instant. Essayez de les assouplir dans « Critères » — un demi-mètre ou mille euros changent souvent beaucoup.",
+      'Aucune annonce ne correspond à vos critères. Essayez de les assouplir dans « Mes critères » — un demi-mètre ou mille euros changent souvent beaucoup.',
     ideales: 'Aucun coup de cœur pour le moment — il en passe quelques-uns par mois.',
     'a-verifier': 'Rien à vérifier : toutes les annonces retenues ont une longueur exploitable.',
     favoris: "Vous n'avez encore mis aucune annonce de côté. L'étoile sur une carte l'ajoute ici.",
-    baisses: 'Aucune baisse de prix constatée sur les annonces suivies.',
+    baisses: 'Aucune baisse de prix constatée. Il en faut plusieurs collectes pour en repérer.',
   };
 
   return (

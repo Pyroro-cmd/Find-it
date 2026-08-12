@@ -4,7 +4,7 @@ import { extractLength } from './enrich/length.js';
 import { enrichWithLlm, isLlmEnabled, type LlmExtraction, type LlmInput } from './enrich/llm.js';
 import { computeScore } from './enrich/score.js';
 import { departmentFromPostalCode, facadeFromDepartment, normalize } from './util/text.js';
-import type { ExistingListing } from './db.js';
+import type { StoredListing } from './store.js';
 
 /**
  * Transforme des annonces brutes en annonces exploitables.
@@ -30,7 +30,7 @@ export type PipelineStats = {
 
 export async function enrichAll(
   raw: RawListing[],
-  existing: Map<string, ExistingListing>,
+  existing: Map<string, StoredListing>,
 ): Promise<{ listings: EnrichedListing[]; stats: PipelineStats }> {
   const stats: PipelineStats = {
     total: raw.length,
@@ -116,7 +116,7 @@ export async function enrichAll(
       imagesCount: listing.images.length,
       descriptionLength: listing.description?.length ?? 0,
       isNew: !prior,
-      previousPriceEur: prior?.price_eur ?? null,
+      previousPriceEur: prior?.priceEur ?? null,
     });
 
     return {

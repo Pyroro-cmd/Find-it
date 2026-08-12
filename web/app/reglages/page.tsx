@@ -1,136 +1,177 @@
-import { updateCriteria } from '@/app/actions';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
-import { fetchCriteria, fetchLastRun } from '@/lib/queries';
-import { formatDateTime } from '@/lib/format';
+import { DEFAULT_CRITERIA, loadCriteria, saveCriteria } from '@/lib/criteria';
+import type { Criteria } from '@/lib/types';
 
-export const dynamic = 'force-dynamic';
+export default function SettingsPage() {
+  const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
+  const [saved, setSaved] = useState(false);
 
-export default async function SettingsPage() {
-  const [criteria, run] = await Promise.all([fetchCriteria(), fetchLastRun()]);
+  useEffect(() => setCriteria(loadCriteria()), []);
+
+  const set = (patch: Partial<Criteria>) => {
+    setCriteria((previous) => ({ ...previous, ...patch }));
+    setSaved(false);
+  };
+
+  const toggleInList = (list: string[] | null, value: string, fallback: string[]): string[] => {
+    const current = list ?? fallback;
+    return current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+  };
+
+  const submit = (event: React.FormEvent) => {
+    event.preventDefault();
+    saveCriteria(criteria);
+    setSaved(true);
+  };
 
   return (
     <>
-      <Header run={run} />
+      <Header run={null} current="reglages" />
 
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Critères de recherche</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Mes critères</h1>
         <p className="mt-2 text-sm text-text-muted">
           Ces critères filtrent les annonces déjà collectées : les modifier prend effet
           immédiatement, sans attendre la collecte du lendemain. Rien n'est supprimé — une annonce
           écartée aujourd'hui réapparaît si vous assouplissez un seuil.
         </p>
+        <p className="mt-2 text-sm text-text-muted">
+          Ils sont enregistrés dans <strong>ce navigateur</strong>. Chaque personne à qui vous
+          partagez le lien a donc ses propres critères et ses propres favoris, sans vous gêner.
+        </p>
 
-        <form action={updateCriteria} className="mt-8 space-y-8">
+        <form onSubmit={submit} className="mt-8 space-y-8">
           <Section
             title="Taille et budget"
             note="Le seuil « idéal » ne filtre pas : il sert à repérer les annonces qui cochent toutes les cases, mises en avant dans l'onglet Coups de cœur."
           >
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <NumberField
-                name="min_length_m"
                 label="Longueur minimale (m)"
-                defaultValue={criteria.min_length_m}
-                step={0.1}
                 hint="En dessous, l'annonce est écartée"
-              />
-              <NumberField
-                name="ideal_min_length_m"
-                label="Longueur idéale (m)"
-                defaultValue={criteria.ideal_min_length_m}
+                value={criteria.minLengthM}
                 step={0.1}
+                onChange={(v) => set({ minLengthM: v ?? DEFAULT_CRITERIA.minLengthM })}
               />
               <NumberField
-                name="max_price_eur"
+                label="Longueur idéale (m)"
+                value={criteria.idealMinLengthM}
+                step={0.1}
+                onChange={(v) => set({ idealMinLengthM: v ?? DEFAULT_CRITERIA.idealMinLengthM })}
+              />
+              <NumberField
                 label="Budget maximal (€)"
-                defaultValue={criteria.max_price_eur}
-                step={500}
                 hint="Au-dessus, l'annonce est écartée"
+                value={criteria.maxPriceEur}
+                step={500}
+                onChange={(v) => set({ maxPriceEur: v ?? DEFAULT_CRITERIA.maxPriceEur })}
               />
               <NumberField
-                name="ideal_max_price_eur"
                 label="Budget idéal (€)"
-                defaultValue={criteria.ideal_max_price_eur}
+                value={criteria.idealMaxPriceEur}
                 step={500}
+                onChange={(v) => set({ idealMaxPriceEur: v ?? DEFAULT_CRITERIA.idealMaxPriceEur })}
               />
             </div>
           </Section>
 
           <Section title="Type de bateau">
             <CheckboxGroup
-              name="allowed_hull_types"
               options={[
                 ['monocoque', 'Monocoque'],
                 ['catamaran', 'Catamaran'],
                 ['trimaran', 'Trimaran'],
               ]}
-              selected={criteria.allowed_hull_types}
+              selected={criteria.allowedHullTypes}
+              onToggle={(value) =>
+                set({
+                  allowedHullTypes: toggleInList(
+                    criteria.allowedHullTypes,
+                    value,
+                    DEFAULT_CRITERIA.allowedHullTypes,
+                  ),
+                })
+              }
             />
-            <div className="mt-4 grid grid-cols-2 gap-4">
+
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <NumberField
-                name="min_year_built"
                 label="Année minimale"
-                defaultValue={criteria.min_year_built ?? ''}
-                step={1}
                 hint="Laisser vide pour ne pas filtrer"
+                value={criteria.minYearBuilt ?? ''}
+                step={1}
+                onChange={(v) => set({ minYearBuilt: v })}
               />
               <NumberField
-                name="max_year_built"
                 label="Année maximale"
-                defaultValue={criteria.max_year_built ?? ''}
+                value={criteria.maxYearBuilt ?? ''}
                 step={1}
+                onChange={(v) => set({ maxYearBuilt: v })}
               />
             </div>
           </Section>
 
-          <Section
-            title="Zone géographique"
-            note="Aucune case cochée = toute la France."
-          >
+          <Section title="Zone géographique" note="Aucune case cochée = toute la France.">
             <CheckboxGroup
-              name="allowed_facades"
               options={[
                 ['mediterranee', 'Méditerranée'],
                 ['atlantique', 'Atlantique'],
                 ['manche', 'Manche / Mer du Nord'],
                 ['interieur', 'Intérieur (lacs, fleuves)'],
               ]}
-              selected={criteria.allowed_facades ?? []}
+              selected={criteria.allowedFacades ?? []}
+              onToggle={(value) => {
+                const next = toggleInList(criteria.allowedFacades, value, []);
+                set({ allowedFacades: next.length === 0 ? null : next });
+              }}
             />
           </Section>
 
           <Section title="Exclusions">
             <div className="space-y-3">
               <Toggle
-                name="exclude_projects"
                 label="Écarter les épaves et bateaux pour pièces"
                 hint="Les bateaux simplement « à rafraîchir » sont conservés : à ce budget, c'est la norme."
-                defaultChecked={criteria.exclude_projects}
+                checked={criteria.excludeProjects}
+                onChange={(v) => set({ excludeProjects: v })}
               />
               <Toggle
-                name="exclude_pro_sellers"
                 label="Écarter les vendeurs professionnels"
                 hint="Les pros sont souvent plus chers, mais les annonces sont mieux documentées."
-                defaultChecked={criteria.exclude_pro_sellers}
+                checked={criteria.excludeProSellers}
+                onChange={(v) => set({ excludeProSellers: v })}
               />
               <Toggle
-                name="include_unknown_length"
                 label="Garder les annonces dont la longueur reste inconnue"
                 hint="Recommandé : elles arrivent dans l'onglet « À vérifier » plutôt que d'être perdues."
-                defaultChecked={criteria.include_unknown_length}
+                checked={criteria.includeUnknownLength}
+                onChange={(v) => set({ includeUnknownLength: v })}
               />
             </div>
           </Section>
 
-          <div className="flex items-center gap-4 border-t border-border pt-6">
+          <div className="flex flex-wrap items-center gap-4 border-t border-border pt-6">
             <button
               type="submit"
               className="rounded-lg bg-accent px-5 py-2.5 font-medium text-white hover:opacity-90"
             >
               Enregistrer
             </button>
-            <span className="text-xs text-text-muted">
-              Dernière modification : {formatDateTime(criteria.updated_at)}
-            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setCriteria(DEFAULT_CRITERIA);
+                saveCriteria(DEFAULT_CRITERIA);
+                setSaved(true);
+              }}
+              className="text-sm text-text-muted underline hover:text-text"
+            >
+              Revenir aux valeurs par défaut
+            </button>
+            {saved ? <span className="text-sm text-good">Enregistré.</span> : null}
           </div>
         </form>
       </main>
@@ -138,15 +179,7 @@ export default async function SettingsPage() {
   );
 }
 
-function Section({
-  title,
-  note,
-  children,
-}: {
-  title: string;
-  note?: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-border bg-surface p-6">
       <h2 className="font-medium">{title}</h2>
@@ -157,26 +190,26 @@ function Section({
 }
 
 function NumberField({
-  name,
   label,
-  defaultValue,
-  step,
   hint,
+  value,
+  step,
+  onChange,
 }: {
-  name: string;
   label: string;
-  defaultValue: number | string;
-  step: number;
   hint?: string;
+  value: number | string;
+  step: number;
+  onChange: (value: number | null) => void;
 }) {
   return (
     <label className="block">
       <span className="text-sm font-medium">{label}</span>
       <input
         type="number"
-        name={name}
         step={step}
-        defaultValue={defaultValue}
+        value={value}
+        onChange={(e) => onChange(e.target.value === '' ? null : Number(e.target.value))}
         className="mt-1 w-full rounded-lg border border-border bg-bg px-3 py-2 outline-none focus:border-accent"
       />
       {hint ? <span className="mt-1 block text-xs text-text-muted">{hint}</span> : null}
@@ -185,13 +218,13 @@ function NumberField({
 }
 
 function CheckboxGroup({
-  name,
   options,
   selected,
+  onToggle,
 }: {
-  name: string;
   options: Array<[string, string]>;
   selected: string[];
+  onToggle: (value: string) => void;
 }) {
   return (
     <div className="flex flex-wrap gap-3">
@@ -202,9 +235,8 @@ function CheckboxGroup({
         >
           <input
             type="checkbox"
-            name={name}
-            value={value}
-            defaultChecked={selected.includes(value)}
+            checked={selected.includes(value)}
+            onChange={() => onToggle(value)}
             className="accent-[var(--accent)]"
           />
           {label}
@@ -215,22 +247,22 @@ function CheckboxGroup({
 }
 
 function Toggle({
-  name,
   label,
   hint,
-  defaultChecked,
+  checked,
+  onChange,
 }: {
-  name: string;
   label: string;
   hint: string;
-  defaultChecked: boolean;
+  checked: boolean;
+  onChange: (value: boolean) => void;
 }) {
   return (
     <label className="flex cursor-pointer gap-3">
       <input
         type="checkbox"
-        name={name}
-        defaultChecked={defaultChecked}
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
         className="mt-1 accent-[var(--accent)]"
       />
       <span>
