@@ -26,7 +26,12 @@ jobs:
         run: npm ci
       - working-directory: scraper
         run: npx playwright install --with-deps chromium
+      - name: Sonde des sources alternatives
+        working-directory: scraper
+        run: npm run probe:sources
+
       - name: Sonde des moteurs de recherche
+        if: always() && inputs.tout
         working-directory: scraper
         run: npm run probe:search
 
