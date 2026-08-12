@@ -2,12 +2,14 @@ import * as cheerio from 'cheerio';
 import { chromium, type Browser } from 'playwright';
 
 /**
- * Sonde approfondie.
+ * Sonde ciblée — dernière étape avant l'écriture des parseurs.
  *
- * La première sonde a identifié les sites joignables ; celle-ci extrait de
- * leurs pages de résultats ce qu'il faut pour écrire les parseurs : blocs de
- * données structurées, forme des URL de détail, et HTML d'une carte d'annonce
- * réelle. Elle évite ainsi une troisième itération à l'aveugle.
+ * Les sondes précédentes ont identifié les deux sources exploitables
+ * (boat24 et theyachtmarket) et la structure de leurs cartes. Il reste à
+ * connaître leurs formulaires de recherche : sans les noms de paramètres,
+ * impossible de demander « voiliers de plus de 10 m à moins de 20 000 € »
+ * et il faudrait parcourir des milliers d'annonces pour les filtrer après
+ * coup.
  *
  *   npm run probe:deep
  */
@@ -15,18 +17,20 @@ import { chromium, type Browser } from 'playwright';
 const USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
-type Target = { name: string; url: string; via: 'fetch' | 'chromium' };
+type Target = { name: string; url: string; via: 'fetch' | 'chromium'; cardClass: string };
 
 const TARGETS: Target[] = [
-  { name: 'boat24', url: 'https://www.boat24.com/fr/voiliers/', via: 'chromium' },
-  { name: 'scanboat', url: 'https://www.scanboat.com/fr/boat-market/boats', via: 'fetch' },
-  { name: 'theyachtmarket', url: 'https://www.theyachtmarket.com/fr/bateaux-a-vendre/', via: 'chromium' },
-  { name: 'yachtall', url: 'https://www.yachtall.com/fr/', via: 'chromium' },
-  { name: 'rightboat', url: 'https://www.rightboat.com/boats-for-sale', via: 'fetch' },
+  { name: 'boat24', url: 'https://www.boat24.com/fr/voiliers/', via: 'chromium', cardClass: 'blurb' },
+  {
+    name: 'theyachtmarket',
+    url: 'https://www.theyachtmarket.com/fr/bateaux-a-vendre/',
+    via: 'chromium',
+    cardClass: 'info-col',
+  },
 ];
 
 async function main(): Promise<void> {
-  console.log('\n=== Sonde approfondie ===\n');
+  console.log('\n=== Sonde ciblée : formulaires et contenu des cartes ===\n');
 
   let browser: Browser | undefined;
   try {
@@ -36,7 +40,7 @@ async function main(): Promise<void> {
     });
 
     for (const target of TARGETS) {
-      console.log(`\n${'═'.repeat(70)}\n${target.name.toUpperCase()} — ${target.url}\n${'═'.repeat(70)}`);
+      console.log(`\n${'═'.repeat(70)}\n${target.name.toUpperCase()}\n${'═'.repeat(70)}`);
       try {
         const html =
           target.via === 'chromium' ? await getViaChromium(browser, target.url) : await getViaFetch(target.url);
@@ -45,9 +49,24 @@ async function main(): Promise<void> {
         console.log(`  ÉCHEC : ${error instanceof Error ? error.message.slice(0, 150) : error}`);
       }
     }
+
+    // Vérifie la réversibilité de l'obfuscation des liens boat24 : les cartes
+    // portent un data-link en base64 dont le contenu est chiffré en ROT13.
+    console.log(`\n${'═'.repeat(70)}\nBOAT24 — décodage des liens\n${'═'.repeat(70)}`);
+    const sample =
+      'dWdnY2Y6Ly9qamoub2JuZzI0LnBiei9zZS9pYnZ5dnJlZi93cm5hYXJuaC93cm5hYXJuaC1maGEtYnFsZmZybC00OS9xcmdudnkvNzM0OTk5Lw==';
+    console.log(`  base64 → ${Buffer.from(sample, 'base64').toString('utf-8')}`);
+    console.log(`  + rot13 → ${rot13(Buffer.from(sample, 'base64').toString('utf-8'))}`);
   } finally {
     await browser?.close().catch(() => undefined);
   }
+}
+
+function rot13(input: string): string {
+  return input.replace(/[a-zA-Z]/g, (c) => {
+    const base = c <= 'Z' ? 65 : 97;
+    return String.fromCharCode(((c.charCodeAt(0) - base + 13) % 26) + base);
+  });
 }
 
 async function getViaFetch(url: string): Promise<string> {
@@ -73,8 +92,6 @@ async function getViaChromium(browser: Browser, url: string): Promise<string> {
   try {
     const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
     if (response && response.status() >= 400) throw new Error(`HTTP ${response.status()}`);
-    // Le contenu des sites d'annonces arrive souvent après le chargement initial,
-    // et le défilement déclenche le chargement différé des cartes.
     await page.waitForTimeout(3000);
     await page.mouse.wheel(0, 3000);
     await page.waitForTimeout(2000);
@@ -84,95 +101,72 @@ async function getViaChromium(browser: Browser, url: string): Promise<string> {
   }
 }
 
-const PRICE = /\d[\d\s .,]{2,}\s*(?:€|EUR|CHF|£)/;
-
 function analyse(html: string, target: Target): void {
   const $ = cheerio.load(html);
-  console.log(`  taille : ${(html.length / 1024).toFixed(0)} Ko`);
 
-  // --- 1. Données structurées -------------------------------------------
-  const blocks: string[] = [];
-  $('script[type="application/ld+json"]').each((_, el) => {
-    blocks.push($(el).contents().text().trim());
-  });
-  console.log(`\n  ── JSON-LD : ${blocks.length} bloc(s)`);
-  for (const [i, raw] of blocks.entries()) {
-    try {
-      const parsed = JSON.parse(raw);
-      const flat = JSON.stringify(parsed);
-      console.log(`  [${i}] ${flat.slice(0, 900)}${flat.length > 900 ? '…' : ''}`);
-    } catch {
-      console.log(`  [${i}] (illisible) ${raw.slice(0, 150)}`);
+  // --- Formulaires de recherche -------------------------------------------
+  console.log('\n  ── Formulaires');
+  $('form').each((i, form) => {
+    const $form = $(form);
+    const action = $form.attr('action') ?? '(sans action)';
+    const method = $form.attr('method') ?? 'get';
+    const fields: string[] = [];
+
+    $form.find('input,select').each((_, el) => {
+      const $el = $(el);
+      const name = $el.attr('name');
+      if (!name) return;
+      const type = $el.attr('type') ?? el.tagName;
+      if (el.tagName === 'select') {
+        const options = $el
+          .find('option')
+          .slice(0, 6)
+          .map((_, o) => $(o).attr('value'))
+          .get()
+          .filter(Boolean)
+          .join('|');
+        fields.push(`${name}[select: ${options}]`);
+      } else {
+        fields.push(`${name}[${type}]`);
+      }
+    });
+
+    if (fields.length > 0) {
+      console.log(`  form#${i} ${method.toUpperCase()} ${action}`);
+      console.log(`    ${fields.slice(0, 30).join(' ')}`);
     }
-  }
+  });
 
-  // --- 2. Forme des URL de détail ---------------------------------------
-  const paths = new Map<string, number>();
-  const samples = new Map<string, string>();
+  // --- Liens de pagination -------------------------------------------------
+  const pagination = new Set<string>();
   $('a[href]').each((_, el) => {
     const href = $(el).attr('href') ?? '';
-    let url: URL;
-    try {
-      url = new URL(href, target.url);
-    } catch {
-      return;
-    }
-    // On généralise le chemin : les segments numériques ou longs deviennent
-    // des jokers, ce qui fait ressortir le gabarit des pages de détail.
-    const pattern = url.pathname
-      .split('/')
-      .map((seg) => (/^\d+$/.test(seg) ? '{id}' : seg.length > 25 ? '{slug}' : seg))
-      .join('/');
-    paths.set(pattern, (paths.get(pattern) ?? 0) + 1);
-    if (!samples.has(pattern)) samples.set(pattern, url.toString());
+    if (/[?&](page|p|seite|start|offset)=/i.test(href)) pagination.add(href.slice(0, 120));
   });
+  console.log(`\n  ── Pagination : ${[...pagination].slice(0, 6).join('  ') || '(aucun lien paginé)'}`);
 
-  console.log('\n  ── Gabarits d’URL les plus fréquents');
-  for (const [pattern, count] of [...paths.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10)) {
-    console.log(`  ${String(count).padStart(4)}× ${pattern}`);
-    console.log(`        ex. ${samples.get(pattern)}`);
-  }
-
-  // --- 3. Cartes d'annonce ------------------------------------------------
-  // Une carte contient un lien ET un prix. On cherche les plus petits
-  // éléments satisfaisant les deux, puis la classe qu'ils partagent.
-  const cardClasses = new Map<string, number>();
-  $('*').each((_, el) => {
-    const node = $(el);
-    const cls = (node.attr('class') ?? '').trim();
-    if (!cls) return;
-    if (node.find('a[href]').length === 0) return;
-    const text = node.text();
-    if (!PRICE.test(text)) return;
-    if (text.length > 800) return; // trop gros : c'est un conteneur, pas une carte
-    for (const c of cls.split(/\s+/)) {
-      if (c) cardClasses.set(c, (cardClasses.get(c) ?? 0) + 1);
-    }
-  });
-
-  const ranked = [...cardClasses.entries()]
-    .filter(([, n]) => n >= 3)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 12);
-
-  console.log('\n  ── Classes candidates pour une carte (lien + prix)');
-  if (ranked.length === 0) console.log('  (aucune — prix probablement chargé en JavaScript)');
-  for (const [cls, n] of ranked) console.log(`  ${String(n).padStart(4)}× .${cls}`);
-
-  // HTML d'une carte réelle : la matière première pour écrire les sélecteurs.
-  const best = ranked[0]?.[0];
-  if (best) {
-    console.log(`\n  ── Exemple de carte (.${best})`);
-    $(`[class~="${best}"]`)
-      .slice(0, 2)
-      .each((i, el) => {
-        const outer = $.html(el).replace(/\s+/g, ' ').slice(0, 1400);
-        console.log(`  --- carte ${i} ---\n  ${outer}`);
-      });
-  }
+  // --- Contenu réel d'une carte -------------------------------------------
+  console.log(`\n  ── Texte des cartes (.${target.cardClass})`);
+  $(`[class~="${target.cardClass}"]`)
+    .slice(0, 4)
+    .each((i, el) => {
+      const $card = $(el);
+      const text = $card.text().replace(/\s+/g, ' ').trim().slice(0, 320);
+      const title = $card.attr('title') ?? '';
+      const dataLink = $card.attr('data-link') ?? '';
+      console.log(`  [${i}] title="${title}"`);
+      console.log(`      texte : ${text}`);
+      if (dataLink) {
+        console.log(`      lien  : ${rot13(Buffer.from(dataLink, 'base64').toString('utf-8'))}`);
+      }
+      const href = $card.find('a[href]').first().attr('href');
+      if (href) console.log(`      href  : ${href}`);
+      const img = $card.find('img').first().attr('src');
+      if (img) console.log(`      image : ${img}`);
+    });
 }
 
 main().catch((error) => {
-  console.error('Sonde approfondie en échec :', error);
+  console.error('Sonde ciblée en échec :', error);
   process.exitCode = 1;
 });
