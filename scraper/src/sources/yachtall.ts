@@ -26,18 +26,24 @@ import { diagnosePage, dumpPage, launchBrowser, newContext } from '../util/brows
  * C'est exactement ce qui manque à Leboncoin et qui fait tout l'intérêt du
  * projet : le critère « plus de 10 mètres » devient exact.
  *
- * Une contrainte demeure : le site ne pagine pas par URL — une adresse à
- * paramètres déclenche sa vérification anti-bot. On fait donc défiler la page
- * comme le ferait un visiteur, jusqu'à ce qu'elle cesse de s'allonger.
+ * **On ne lit que la première page, et c'est délibéré.** Le `robots.txt` du
+ * site interdit explicitement ses URL paginées :
+ *
+ *   Disallow: /en/boats/selling/*?   # paging or search form sent
+ *
+ * La pagination passe par des paramètres d'URL, précisément ceux que le site
+ * demande aux robots de ne pas parcourir. Toutes les formes de chemin essayées
+ * répondent d'ailleurs 403. On s'en tient donc aux quarante-cinq annonces les
+ * plus récentes, que le site sert volontiers — ce qui correspond exactement au
+ * besoin : une veille quotidienne, dont l'historique s'accumule collecte après
+ * collecte.
  */
 
 const SOURCE = 'yachtall';
 const BASE = 'https://www.yachtall.com';
 const LISTING_URL = `${BASE}/fr/voiliers`;
 
-/** Le site présente les annonces les plus récentes d'abord : quelques centaines suffisent. */
-const MAX_ANNONCES = Number(process.env.YA_MAX_ANNONCES ?? 600);
-const MAX_PAGES = Number(process.env.YA_MAX_PAGES ?? 15);
+/** Tours de défilement : la page charge ses vignettes en différé. */
 const MAX_DEFILEMENTS = Number(process.env.YA_MAX_DEFILEMENTS ?? 20);
 /** Marge volontaire au-dessus du budget : une annonce se négocie. */
 const MAX_PRICE = Number(process.env.YA_MAX_PRICE ?? 30000);
@@ -60,58 +66,29 @@ export class YachtallSource implements Source {
       const context = await newContext(browser);
       const page = await context.newPage();
 
-      const parId = new Map<string, RawListing>();
-      let vuesTotal = 0;
-
-      for (let numero = 1; numero <= MAX_PAGES; numero++) {
-        // Pagination par chemin, pas par paramètre : `?page=2` déclencherait la
-        // vérification anti-bot, `/voiliers/2` est une adresse ordinaire.
-        const url = numero === 1 ? LISTING_URL : `${LISTING_URL}/${numero}`;
-        const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-        const statut = response?.status() ?? 0;
-
-        if (statut >= 400) {
-          // Une page absente marque simplement la fin de la liste ; un refus
-          // sur la première page, lui, est une panne.
-          if (numero === 1) {
-            errors.push(`HTTP ${statut}`);
-            await diagnosePage(page, 'yachtall-refus');
-            return { source: SOURCE, listings: [], errors, reachable: false };
-          }
-          console.log(`    yachtall page ${numero} : HTTP ${statut}, fin du parcours`);
-          break;
-        }
-        reachable = true;
-
-        await page.waitForTimeout(2500);
-        if (numero === 1) await accepterCookies(page);
-        await defilerJusquAuBout(page);
-
-        if (numero === 1) await dumpPage(page, 'yachtall');
-
-        const { listings, cardsSeen } = parsePage(await page.content());
-        vuesTotal += cardsSeen;
-
-        const avant = parId.size;
-        for (const listing of listings) {
-          if (!parId.has(listing.sourceId)) parId.set(listing.sourceId, listing);
-        }
-        const ajoutees = parId.size - avant;
-
-        console.log(
-          `    yachtall page ${numero} : ${cardsSeen} cartes lues, ` +
-            `${listings.length} retenues, ${ajoutees} nouvelles`,
-        );
-
-        if (cardsSeen === 0) {
-          if (numero === 1) await diagnosePage(page, 'yachtall');
-          break;
-        }
-        if (parId.size >= MAX_ANNONCES) break;
+      const response = await page.goto(LISTING_URL, {
+        waitUntil: 'domcontentloaded',
+        timeout: 60_000,
+      });
+      const statut = response?.status() ?? 0;
+      if (statut >= 400) {
+        errors.push(`HTTP ${statut}`);
+        await diagnosePage(page, 'yachtall-refus');
+        return { source: SOURCE, listings: [], errors, reachable: false };
       }
+      reachable = true;
 
-      console.log(`    yachtall : ${vuesTotal} cartes parcourues au total`);
-      return { source: SOURCE, listings: [...parId.values()], errors, reachable };
+      await page.waitForTimeout(2500);
+      await accepterCookies(page);
+      await defilerJusquAuBout(page);
+      await dumpPage(page, 'yachtall');
+
+      const { listings, cardsSeen } = parsePage(await page.content());
+      console.log(`    yachtall : ${cardsSeen} cartes lues, ${listings.length} retenues`);
+
+      if (cardsSeen === 0) await diagnosePage(page, 'yachtall');
+
+      return { source: SOURCE, listings, errors, reachable };
     } catch (error) {
       errors.push(`échec général : ${message(error)}`);
       return { source: SOURCE, listings: [], errors, reachable };

@@ -197,10 +197,16 @@ Prix: € 490 000, TVA incluse
 La longueur est **étiquetée**. Le tri « plus de 10 mètres » devient donc exact
 au lieu de probabiliste — c'est exactement ce que Leboncoin ne permet pas.
 
-Le site ne pagine pas par URL (une adresse à paramètres déclenche sa
-vérification anti-bot) : le collecteur fait défiler la page comme un visiteur
-jusqu'à ce qu'elle cesse de s'allonger. Les annonces les plus récentes venant
-en premier, c'est la bonne fenêtre pour une veille quotidienne.
+**On ne lit que la première page, et c'est un choix.** Le `robots.txt` du site
+interdit ses URL paginées — `Disallow: /en/boats/selling/*?  # paging or search
+form sent` — et la pagination passe justement par des paramètres d'URL. On s'en
+tient donc aux quarante-cinq annonces les plus récentes, que le site sert
+volontiers.
+
+C'est moins limitant qu'il n'y paraît : ces quarante-cinq-là sont les
+**nouvelles du jour**, exactement ce qu'une veille quotidienne doit voir. Le
+fichier de données, lui, accumule — le catalogue s'étoffe collecte après
+collecte, sans jamais repasser sur les mêmes pages.
 
 ### Pourquoi Leboncoin n'y est pas
 
@@ -280,7 +286,6 @@ Surchargeables par variable d'environnement, sans toucher au code :
 
 | Variable | Défaut | Effet |
 |---|---|---|
-| `YA_MAX_ANNONCES` | `600` | Annonces chargées par défilement sur yachtall |
 | `YA_MAX_PRICE` | `30000` | Plafond appliqué à la collecte |
 | `YA_MIN_LENGTH` | `8` | Plancher de longueur, en mètres |
 | `FINDIT_DISABLE_YACHTALL` | — | `1` coupe la source |
