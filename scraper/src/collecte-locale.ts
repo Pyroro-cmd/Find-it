@@ -57,7 +57,11 @@ async function main(): Promise<void> {
   });
 
   if (code !== 0) {
-    console.error('\nLa collecte a échoué — le fichier de données n’a pas été modifié.');
+    // Une collecte ratée journalise tout de même l'incident dans le fichier.
+    // Utile sur le serveur, où le site doit afficher la panne ; encombrant
+    // ici, où cela laisserait votre dépôt modifié sans rien apporter.
+    await lancerSilencieux('git', ['checkout', '--', path.relative(RACINE_DEPOT, DATA_FILE)]);
+    console.error('\nLa collecte a échoué — le fichier de données est resté intact.');
     process.exitCode = code;
     return;
   }
