@@ -11,7 +11,8 @@
     "probe": "tsx src/probe.ts",
     "probe:deep": "tsx src/probe-deep.ts",
     "probe:search": "tsx src/probe-search.ts",
-    "probe:sources": "tsx src/probe-sources.ts"
+    "probe:sources": "tsx src/probe-sources.ts",
+    "probe:lbc": "tsx src/probe-lbc.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",
