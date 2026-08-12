@@ -1,9 +1,9 @@
 {
  "version": 1,
- "generatedAt": "2026-08-12T16:44:22.459Z",
+ "generatedAt": "2026-08-12T16:51:20.610Z",
  "run": {
-  "startedAt": "2026-08-12T16:43:33.771Z",
-  "finishedAt": "2026-08-12T16:44:22.459Z",
+  "startedAt": "2026-08-12T16:50:33.050Z",
+  "finishedAt": "2026-08-12T16:51:20.610Z",
   "status": "partial",
   "trigger": "manual",
   "stats": {
@@ -15,8 +15,8 @@
    "fromLlm": 0,
    "unresolved": 0,
    "llmCalled": 0,
-   "inserted": 2,
-   "updated": 0,
+   "inserted": 0,
+   "updated": 2,
    "priceDrops": 0,
    "gone": 0,
    "pruned": 0,
@@ -27,7 +27,7 @@
     "count": 1,
     "errors": [],
     "reachable": true,
-    "seconds": 15
+    "seconds": 14
    },
    "boat24": {
     "count": 1,
@@ -67,10 +67,10 @@
     "https://static.yachtall.com/image/layout/star-empty.png"
    ],
    "priceEur": 7500,
-   "locationLabel": "Pays-Bas avant 1985",
+   "locationLabel": "Pays-Bas",
    "department": null,
    "facade": null,
-   "country": "Pays-Bas avant 1985",
+   "country": "Pays-Bas",
    "lengthM": 9.35,
    "lengthSource": "source_field",
    "lengthConfidence": 0.95,
@@ -85,19 +85,18 @@
    "isProject": false,
    "projectReason": null,
    "sellerType": "pro",
-   "score": 63,
+   "score": 58,
    "scoreBreakdown": {
     "rapport_taille_prix": 40,
     "prix_au_metre": 802,
     "longueur": 2,
     "fiabilite_longueur": 10,
     "qualite_annonce": 6,
-    "bonus": 5,
-    "total": 63
+    "total": 58
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-12T16:44:22.459Z",
+   "lastSeenAt": "2026-08-12T16:51:20.609Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -136,19 +135,18 @@
    "isProject": false,
    "projectReason": null,
    "sellerType": null,
-   "score": 40,
+   "score": 35,
    "scoreBreakdown": {
     "rapport_taille_prix": 18,
     "prix_au_metre": 2211,
     "longueur": 3,
     "fiabilite_longueur": 10,
     "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 40
+    "total": 35
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-12T16:44:22.459Z",
+   "lastSeenAt": "2026-08-12T16:51:20.609Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
