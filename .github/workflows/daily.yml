@@ -110,13 +110,16 @@ jobs:
           git config user.name  "Find-it (collecte)"
           git config user.email "actions@users.noreply.github.com"
 
-          if git diff --quiet -- web/public/data/listings.json; then
+          # `git diff` ignore les fichiers non suivis : au tout premier passage,
+          # il déclarait « aucun changement » alors que le fichier venait
+          # d'être créé. On indexe d'abord, puis on compare à l'index.
+          git add web/public/data/listings.json
+          if git diff --cached --quiet -- web/public/data/listings.json; then
             echo "Aucun changement dans les annonces — pas de commit."
             exit 0
           fi
 
           NB=$(node -e "const d=require('./web/public/data/listings.json');console.log(d.listings.filter(l=>l.status==='active').length)")
-          git add web/public/data/listings.json
           git commit -m "Collecte du $(TZ=Europe/Paris date +'%d/%m/%Y') — ${NB} annonces actives"
 
           # Une autre exécution a pu écrire entre-temps ; on rejoue par-dessus.
