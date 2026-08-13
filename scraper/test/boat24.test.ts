@@ -115,3 +115,53 @@ test('les annexes et petits dériveurs sont écartés dès la collecte', () => {
       France » Brest1 500 €</div>`;
   assert.equal(parseListingPage(html).length, 0);
 });
+
+/**
+ * Cas relevés dans la première collecte élargie : le texte de la carte colle le
+ * titre aux dimensions, et la longueur lue devenait fantaisiste.
+ */
+test('un chiffre du modèle collé aux dimensions ne gonfle pas la longueur', () => {
+  const carte =
+    '1/5retoursuivantFavoriQuillardBeneteau FIRST 226,95 x 2,50 mDimensions ' +
+    "1 x 10 cv / 7 kWPuissance du moteur1979Année de fabricationFrance5 000 €Bateau d'occasion";
+
+  // Sans le titre, « FIRST 22 » + « 6,95 » se lit « 226,95 ».
+  const fields = parseCardText(carte, 'Beneteau FIRST 22');
+  assert.equal(fields.lengthM, 6.95);
+  assert.equal(fields.beamM, 2.5);
+});
+
+test('la largeur sert de témoin quand le titre ne suffit pas', () => {
+  // « Dufour Arpège » + « Mk1 » + « 9,30 » : après retrait du titre il reste
+  // « Mk19,30 ». Un 19,30 m large de 3,00 m est impossible ; 9,30 m l'est.
+  const carte =
+    "1/2retoursuivantFavoriVoilier de régateDufour ArpègeMk19,30 x 3,00 mDimensions " +
+    '1975Année de fabricationEspagne7 000 €';
+
+  const fields = parseCardText(carte, 'Dufour Arpège');
+  assert.equal(fields.lengthM, 9.3);
+  assert.equal(fields.beamM, 3);
+});
+
+test('une longueur légitimement collée à un chiffre reste lue', () => {
+  // « Alpa 11.50 » suivi de « 11,56 x 3,20 m » : le rapport est plausible,
+  // aucune correction ne doit s'appliquer.
+  const carte =
+    '1/8retoursuivantFavoriQuillardAlpa 11.5011,56 x 3,20 mDimensions ' +
+    '1974Année de fabricationFrance17 500 €';
+
+  assert.equal(parseCardText(carte, 'Alpa 11.50').lengthM, 11.56);
+});
+
+test('un chiffre parasite est retiré tant que la largeur le confirme', () => {
+  // « 88,00 x 2,00 » : à 44 fois sa largeur ce serait une allumette, mais en
+  // retirant le 8 de tête on obtient 8,00 m pour 2,00 m — un rapport ordinaire.
+  assert.equal(parseCardText('Yacht à voile 88,00 x 2,00 mDimensions').lengthM, 8);
+});
+
+test('une longueur invraisemblable et irrécupérable est abandonnée', () => {
+  // Ici aucun retrait n'est possible — « 9,00 » n'a qu'un chiffre de tête, et
+  // le rapport reste absurde. Mieux vaut une longueur inconnue, qui part dans
+  // « À vérifier », qu'une longueur fausse affichée avec aplomb.
+  assert.equal(parseCardText('Yacht à voile 9,00 x 1,00 mDimensions').lengthM, null);
+});

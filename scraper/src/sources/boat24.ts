@@ -160,7 +160,7 @@ function parseCard($: cheerio.CheerioAPI, el: Element): RawListing | null {
   const sourceId = url.match(/\/detail\/(\d+)/)?.[1] ?? url;
 
   const text = $card.text().replace(/\s+/g, ' ').trim();
-  const fields = parseCardText(text);
+  const fields = parseCardText(text, title);
 
   // Filtrage à la source : inutile de transporter des yachts à 900 000 €
   // jusqu'au fichier de données.
@@ -214,16 +214,20 @@ export type Boat24Fields = {
  * un site refond son habillage bien plus souvent que le mot
  * « Année de fabrication ».
  */
-export function parseCardText(text: string): Boat24Fields {
+export function parseCardText(text: string, titre?: string): Boat24Fields {
+  // Le titre est collé aux dimensions dans le texte de la carte :
+  // « Beneteau FIRST 22 » suivi de « 6,95 x 2,50 m » donne « FIRST 226,95 ».
+  // On le retire d'abord, ce qui résout la majorité des cas.
+  if (titre) text = text.replace(titre, ' ');
   // « 14,73 x 4,49 m » — longueur puis largeur.
   //
   // Le « m » est souvent collé au libellé suivant (« 4,49 mDimensions ») : un
   // `\b` classique échouerait puisque « m » et « D » sont tous deux des
   // caractères de mot. On exige donc seulement que le « m » ne soit pas le
   // début d'un mot en minuscules (« metres », « mm ») ni suivi d'un chiffre.
-  const dims = text.match(/(\d{1,2},\d{1,2})\s*x\s*(\d{1,2},\d{1,2})\s*m(?![a-z0-9²])/);
-  const lengthM = dims ? Number(dims[1].replace(',', '.')) : null;
+  const dims = text.match(/(\d{1,3},\d{1,2})\s*x\s*(\d{1,2},\d{1,2})\s*m(?![a-z0-9²])/);
   const beamM = dims ? Number(dims[2].replace(',', '.')) : null;
+  const lengthM = dims ? longueurCoherente(dims[1], beamM) : null;
 
   // « 2005Année de fabrication »
   const year = text.match(/(\d{4})\s*Année de fabrication/);
@@ -258,6 +262,39 @@ export function parseCardText(text: string): Boat24Fields {
     boatType,
     hullType,
   };
+}
+
+/**
+ * Retient une longueur seulement si la largeur la corrobore.
+ *
+ * Un chiffre du modèle peut se coller à la longueur — « ArpègeMk1 » suivi de
+ * « 9,30 » se lit « 19,30 ». La largeur, elle, n'est jamais ambiguë, et le
+ * rapport des deux est une contrainte physique : un voilier fait entre deux et
+ * cinq fois plus long que large. Un 19,30 m de 3,00 m de large sort de cette
+ * fourchette ; en lui retirant son chiffre de tête on retrouve 9,30 m, qui y
+ * rentre. C'est le témoin le plus sûr dont on dispose, et il coûte une
+ * division.
+ */
+function longueurCoherente(brut: string, beamM: number | null): number | null {
+  const valeur = Number(brut.replace(',', '.'));
+  if (!Number.isFinite(valeur)) return null;
+  if (beamM == null || beamM <= 0) return plausibleLength(valeur);
+
+  const RAPPORT_MAX = 5.5;
+  if (valeur / beamM <= RAPPORT_MAX) return plausibleLength(valeur);
+
+  // Trop élancé pour être vrai : on retire les chiffres de tête un à un.
+  let candidat = brut;
+  while (candidat.length > 4 && /^\d\d/.test(candidat)) {
+    candidat = candidat.slice(1);
+    const essai = Number(candidat.replace(',', '.'));
+    if (Number.isFinite(essai) && essai > 0 && essai / beamM <= RAPPORT_MAX) {
+      return plausibleLength(essai);
+    }
+  }
+
+  // Aucune lecture cohérente : mieux vaut une longueur inconnue qu'une fausse.
+  return null;
 }
 
 function parseLoosePrice(text: string): number | null {
