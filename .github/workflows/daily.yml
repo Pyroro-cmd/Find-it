@@ -241,7 +241,10 @@ jobs:
             sleep 20
           done
 
-          if echo "$CONFIG" | grep -q '"status"'; then
+          # `build_type` n'existe que dans une vraie configuration Pages. Ne pas
+          # tester `status` : l'API le renseigne aussi dans ses messages
+          # d'erreur, si bien qu'un « Not Found » passait pour un site activé.
+          if echo "$CONFIG" | grep -q '"build_type"'; then
             echo "::warning::Pages est activé mais ${URL} ne répond pas. Vérifiez que la source est « Deploy from a branch » sur « gh-pages » / « / (root) » : avec la source « GitHub Actions », la branche publiée n'est pas servie."
           else
             echo "::warning::GitHub Pages n'est pas activé sur ce dépôt — c'est pourquoi ${URL} renvoie 404. Settings → Pages → Source « Deploy from a branch » → branche « gh-pages » / dossier « / (root) »."
