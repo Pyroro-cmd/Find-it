@@ -1,13 +1,13 @@
 {
  "version": 1,
- "generatedAt": "2026-08-12T19:25:12.833Z",
+ "generatedAt": "2026-08-13T18:42:07.501Z",
  "run": {
-  "startedAt": "2026-08-12T19:24:50.555Z",
-  "finishedAt": "2026-08-12T19:25:12.833Z",
+  "startedAt": "2026-08-13T18:41:47.377Z",
+  "finishedAt": "2026-08-13T18:42:07.501Z",
   "status": "success",
   "trigger": "manual",
   "stats": {
-   "total": 2,
+   "total": 3,
    "withLength": 2,
    "fromSourceField": 2,
    "fromRegex": 0,
@@ -15,8 +15,8 @@
    "fromLlm": 0,
    "unresolved": 0,
    "llmCalled": 0,
-   "inserted": 0,
-   "updated": 2,
+   "inserted": 1,
+   "updated": 1,
    "priceDrops": 0,
    "gone": 0,
    "pruned": 0,
@@ -24,16 +24,16 @@
   },
   "sources": {
    "yachtall": {
-    "count": 1,
+    "count": 2,
     "errors": [],
     "reachable": true,
     "seconds": 14
    },
    "boat24": {
-    "count": 1,
+    "count": 0,
     "errors": [],
     "reachable": true,
-    "seconds": 8
+    "seconds": 6
    },
    "theyachtmarket": {
     "skipped": true
@@ -89,7 +89,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-12T19:25:12.832Z",
+   "lastSeenAt": "2026-08-13T18:42:07.501Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -148,6 +148,56 @@
      "at": "2026-08-12T16:44:22.459Z"
     }
    ]
+  },
+  {
+   "id": "yachtall:312478",
+   "source": "yachtall",
+   "sourceId": "312478",
+   "url": "https://www.yachtall.com/fr/bateau/narval-38-s312478",
+   "title": "Narval 38",
+   "description": "Narval 38 Narval 38 Voilier / voilier avec cabine: Narval, bateau d'occasion, polyester Longueur x largeur: 11,40 m x 3,30 m, 11,40 x 3,30 m construit: 1975 Moteur: Volvo Penta MD 17, 36 cv (26 kW), diesel € 10 000 Lieu: Allemagne 1975 Société: Boatauction.com Prix de départ de l’enchère: € 10 000, TVA incluse",
+   "images": [
+    "https://image.yachtall.com/image/sboat/0/312/478/ealcw3rf8u.jpg",
+    "https://static.yachtall.com/image/layout/icon/request.gif",
+    "https://static.yachtall.com/image/layout/icon/view-video.gif",
+    "https://static.yachtall.com/image/layout/star-empty.png"
+   ],
+   "priceEur": null,
+   "locationLabel": "Allemagne 1975",
+   "department": null,
+   "facade": null,
+   "country": "Allemagne 1975",
+   "lengthM": 11.4,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1975,
+   "material": "polyester",
+   "engineType": "inboard",
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": "pro",
+   "score": 35,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 0,
+    "note_prix": "prix non communiqué",
+    "longueur": 16,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 6,
+    "bonus": 8,
+    "penalites": -5,
+    "total": 35
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-13T18:42:07.501Z",
+   "lastSeenAt": "2026-08-13T18:42:07.501Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": []
   }
  ]
 }
