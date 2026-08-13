@@ -27,7 +27,21 @@ import { parsePage as parseYachtall } from './sources/yachtall.js';
  *   npm run probe:search
  */
 
-const MARQUES = ['jeanneau', 'beneteau', 'dufour', 'bavaria', 'gibsea', 'kelt', 'hanse'];
+const MARQUES = ['jeanneau', 'beneteau', 'dufour', 'bavaria', 'kelt'];
+
+/**
+ * Pause entre deux requêtes.
+ *
+ * Le premier essai a livré un résultat plus intéressant qu'un simple échec :
+ * la toute première URL a répondu 200, **toutes les suivantes 403**. Ce n'est
+ * pas la signature d'une page absente mais d'une limitation de débit — nos
+ * requêtes s'enchaînaient toutes les deux secondes et demie.
+ *
+ * On repasse donc à un rythme de visiteur. Si les 403 disparaissent, les pages
+ * par marque sont exploitables et le volume collecté peut être multiplié ;
+ * sinon, c'est bien un refus de fond.
+ */
+const PAUSE_MS = Number(process.env.PROBE_PAUSE_MS ?? 12_000);
 
 async function main(): Promise<void> {
   const browser = await launchBrowser();
@@ -68,6 +82,7 @@ async function essayer(page: Page, url: string, site: 'boat24' | 'yachtall'): Pr
 
     if (statut >= 400) {
       console.log(`  ${court(url).padEnd(46)} HTTP ${statut}`);
+      await pause();
       return;
     }
 
@@ -82,9 +97,15 @@ async function essayer(page: Page, url: string, site: 'boat24' | 'yachtall'): Pr
       `  ${court(url).padEnd(46)} HTTP ${statut} — ${cardsSeen} cartes, ` +
         `${listings.length} dans le budget${prix.length ? ` (dès ${prix[0]} €)` : ''}`,
     );
+    await pause();
   } catch (error) {
     console.log(`  ${court(url).padEnd(46)} échec : ${(error as Error).message.slice(0, 60)}`);
+    await pause();
   }
+}
+
+function pause(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, PAUSE_MS));
 }
 
 function court(url: string): string {
