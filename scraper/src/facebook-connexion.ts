@@ -25,6 +25,20 @@ const RACINE_SCRAPER = fileURLToPath(new URL('../', import.meta.url));
 const FICHIER_SESSION = process.env.FB_STORAGE_STATE ?? path.join(RACINE_SCRAPER, 'fb-session.json');
 
 async function main(): Promise<void> {
+  // Même piège que pour la collecte : sans navigateur installé, Playwright
+  // échoue sur un message destiné aux développeurs.
+  try {
+    await fs.access(chromium.executablePath());
+  } catch {
+    console.error(`
+Chromium n'est pas installé pour Playwright. Lancez d'abord, depuis ce dossier :
+
+    npx playwright install chromium
+`);
+    process.exitCode = 1;
+    return;
+  }
+
   console.log(`
 ┌────────────────────────────────────────────────────────────────────────┐
 │  Connexion Facebook — compte dédié uniquement                          │

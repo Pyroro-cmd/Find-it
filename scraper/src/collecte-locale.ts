@@ -28,6 +28,17 @@ const RACINE_DEPOT = fileURLToPath(new URL('../../', import.meta.url));
 const FICHIER_SESSION_FB = process.env.FB_STORAGE_STATE ?? path.join(RACINE_SCRAPER, 'fb-session.json');
 
 async function main(): Promise<void> {
+  if (!(await chromiumEstInstalle())) {
+    console.error(`
+Chromium n'est pas installé pour Playwright, donc aucune source ne peut être
+lue. Une seule commande suffit, à lancer depuis ce dossier :
+
+    npx playwright install chromium
+`);
+    process.exitCode = 1;
+    return;
+  }
+
   const sessionFb = await existe(FICHIER_SESSION_FB);
 
   console.log(`
@@ -35,7 +46,7 @@ async function main(): Promise<void> {
 │  Find-it — collecte depuis votre machine                               │
 ├────────────────────────────────────────────────────────────────────────┤
 │  Leboncoin  : activé (impossible depuis un serveur, possible ici)      │
-│  Facebook   : ${(sessionFb ? 'activé — session trouvée' : 'ignoré — aucune session enregistrée').padEnd(56)}│
+│  Facebook   : ${ligne(sessionFb ? 'activé — session trouvée' : 'ignoré — aucune session enregistrée')}│
 │  yachtall, boat24 : activés comme d'habitude                           │
 └────────────────────────────────────────────────────────────────────────┘
 `);
@@ -125,6 +136,12 @@ async function compterActives(): Promise<number> {
   }
 }
 
+/** Complète une ligne du cadre pour que la bordure droite reste alignée. */
+function ligne(texte: string): string {
+  const LARGEUR = 57;
+  return texte.length >= LARGEUR ? texte.slice(0, LARGEUR) : texte.padEnd(LARGEUR);
+}
+
 function lancer(
   commande: string,
   args: string[],
@@ -148,6 +165,24 @@ function lancerSilencieux(commande: string, args: string[]): Promise<number> {
     enfant.on('close', (code) => resolve(code ?? 1));
     enfant.on('error', () => resolve(1));
   });
+}
+
+/**
+ * Vérifie que le navigateur est là avant de lancer quoi que ce soit.
+ *
+ * Sans lui, les quatre sources échouent l'une après l'autre sur un message que
+ * Playwright destine à des développeurs (« Executable doesn't exist at… »).
+ * Autant poser la question une fois et donner la commande qui répare.
+ */
+async function chromiumEstInstalle(): Promise<boolean> {
+  try {
+    const { chromium } = await import('playwright');
+    const chemin = chromium.executablePath();
+    await fs.access(chemin);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function existe(fichier: string): Promise<boolean> {
