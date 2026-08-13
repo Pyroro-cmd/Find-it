@@ -26,14 +26,16 @@ jobs:
         run: npm ci
       - working-directory: scraper
         run: npx playwright install --with-deps chromium
-      - name: Sonde Leboncoin et Facebook
-        working-directory: scraper
-        run: npm run probe:lbc
-
-      - name: Sonde de pagination et de structure des cartes
-        if: always() && inputs.tout
+      # La sonde en cours d'investigation passe en premier : son journal reste
+      # court et lisible, au lieu d'être noyé sous les sondes d'archive.
+      - name: Sonde des points d'entrée par marque
         working-directory: scraper
         run: npm run probe:search
+
+      - name: Sonde Leboncoin et Facebook
+        if: always() && inputs.tout
+        working-directory: scraper
+        run: npm run probe:lbc
 
       - name: Sonde des sources alternatives
         if: always() && inputs.tout

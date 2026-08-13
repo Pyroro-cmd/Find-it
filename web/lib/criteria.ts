@@ -10,7 +10,11 @@ import type { Criteria, DecoratedListing, Listing, Tab } from './types';
  */
 
 export const DEFAULT_CRITERIA: Criteria = {
-  minLengthM: 9.5,
+  // Le seuil d'écartement est volontairement plus bas que l'objectif de 10 m.
+  // Un bateau de 9,35 m annoncé à 7 500 € mérite d'être vu et écarté par vous,
+  // pas d'être caché par quinze centimètres : c'est « Coups de cœur », plus bas,
+  // qui applique le vrai critère.
+  minLengthM: 9,
   idealMinLengthM: 10,
   maxPriceEur: 22000,
   idealMaxPriceEur: 20000,
