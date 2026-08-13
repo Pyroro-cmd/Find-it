@@ -2,14 +2,9 @@ import type { Browser, Page } from 'playwright';
 import * as cheerio from 'cheerio';
 import type { Element } from 'domhandler';
 import type { RawListing, Source, SourceResult } from '../types.js';
-import {
-  describeForms,
-  diagnosePage,
-  dumpPage,
-  humanDelay,
-  launchBrowser,
-  newContext,
-} from '../util/browser.js';
+import { dumpPage, launchBrowser } from '../util/browser.js';
+import { parcourirPages } from '../util/parcours.js';
+import { marquesARetenir } from './marques.js';
 
 /**
  * boat24.com — première source du projet.
@@ -35,11 +30,14 @@ const BASE = 'https://www.boat24.com';
 const LISTING_URL = `${BASE}/fr/voiliers/`;
 
 /**
- * Une seule page, et c'est tout ce que le site accorde : `?page=2` répond 403,
- * comme toute URL portant des paramètres. Insister ne fait qu'ajouter une
- * requête refusée et une ligne d'erreur trompeuse à chaque collecte.
+ * Pages de marque parcourues en plus de la rubrique générale.
+ *
+ * La pagination par paramètre est refusée (`?page=2` répond 403), mais les
+ * pages par marque sont des chemins ordinaires et visent bien mieux :
+ * `/fr/voiliers/jeanneau/` a rendu vingt-quatre annonces dont six dans le
+ * budget, dès 16 000 €, quand la rubrique générale n'en donnait qu'une.
  */
-const MAX_PAGES = Number(process.env.B24_MAX_PAGES ?? 1);
+const MAX_MARQUES = Number(process.env.B24_MAX_MARQUES ?? 12);
 /** Marge volontaire au-dessus du budget : une annonce se négocie. */
 const MAX_PRICE = Number(process.env.B24_MAX_PRICE ?? 30000);
 const MIN_LENGTH_M = Number(process.env.B24_MIN_LENGTH ?? 8);
@@ -55,70 +53,45 @@ export class Boat24Source implements Source {
     const errors: string[] = [];
     const byId = new Map<string, RawListing>();
     let reachable = false;
+    let cartesTotal = 0;
+    let refus = 0;
+
+    const urls = [LISTING_URL, ...marquesARetenir(MAX_MARQUES).map((m) => `${LISTING_URL}${m}/`)];
 
     let browser: Browser | undefined;
     try {
       browser = await launchBrowser();
-      const context = await newContext(browser);
-      const page = await context.newPage();
 
-      for (let pageNum = 1; pageNum <= MAX_PAGES; pageNum++) {
-        const url = pageNum === 1 ? LISTING_URL : `${LISTING_URL}?page=${pageNum}`;
-        try {
-          const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
-          if (response && response.status() >= 400) {
-            errors.push(`page ${pageNum} : HTTP ${response.status()}`);
-            break;
-          }
-          reachable = true;
+      const visites = await parcourirPages(browser, urls, async (page, url) => {
+        await page.waitForTimeout(2500);
+        // Les cartes se chargent en différé au défilement.
+        for (let i = 0; i < 3; i++) {
+          await page.mouse.wheel(0, 4000);
+          await page.waitForTimeout(700);
+        }
+        if (url === LISTING_URL) await dumpPage(page, 'boat24');
+        return parsePage(await page.content());
+      });
 
-          await page.waitForTimeout(2500);
-          // Les cartes se chargent en différé au défilement.
-          for (let i = 0; i < 3; i++) {
-            await page.mouse.wheel(0, 4000);
-            await page.waitForTimeout(800);
-          }
-
-          if (pageNum === 1) await dumpPage(page, 'boat24-page1');
-
-          const { listings: found, cardsSeen } = parsePage(await page.content());
-          const before = byId.size;
-          for (const listing of found) {
-            if (!byId.has(listing.sourceId)) byId.set(listing.sourceId, listing);
-          }
-          const added = byId.size - before;
-
-          console.log(
-            `    boat24 page ${pageNum} : ${cardsSeen} cartes vues, ${found.length} retenues, ${added} nouvelles`,
-          );
-
-          // Deux pannes très différentes se ressemblent quand on ne compte que
-          // les annonces retenues : le sélecteur qui ne trouve plus rien, et la
-          // page pleine de yachts hors budget. D'où les deux compteurs, et un
-          // diagnostic ciblé dans le journal du run — seul endroit consultable
-          // depuis l'environnement de développement.
-          if (cardsSeen === 0 && pageNum === 1) {
-            await diagnosePage(page, 'boat24');
-          } else if (found.length === 0 && pageNum === 1) {
-            console.log(
-              '    boat24 : des cartes, mais aucune dans le budget — relevé du formulaire de recherche',
-            );
-            await describeForms(page, 'boat24');
-          }
-
-          // Si la pagination n'est pas prise en compte par le site, la page 2
-          // renvoie les mêmes annonces : on s'arrête plutôt que de boucler.
-          if (added === 0) {
-            if (pageNum > 1) console.log('    boat24 : plus de nouvelles annonces, arrêt');
-            break;
-          }
-
-          await humanDelay(1200, 2600);
-        } catch (error) {
-          errors.push(`page ${pageNum} : ${message(error)}`);
-          break;
+      for (const visite of visites) {
+        if (visite.statut >= 400 || !visite.resultat) {
+          refus += 1;
+          continue;
+        }
+        reachable = true;
+        cartesTotal += visite.resultat.cardsSeen;
+        for (const listing of visite.resultat.listings) {
+          if (!byId.has(listing.sourceId)) byId.set(listing.sourceId, listing);
         }
       }
+
+      console.log(
+        `    boat24 : ${visites.length - refus}/${visites.length} pages lues, ` +
+          `${cartesTotal} cartes, ${byId.size} annonces retenues`,
+      );
+
+      if (!reachable) errors.push('aucune page accessible');
+      else if (refus > 0) console.log(`    boat24 : ${refus} page(s) refusée(s), sans gravité`);
 
       return { source: SOURCE, listings: [...byId.values()], errors, reachable };
     } catch (error) {

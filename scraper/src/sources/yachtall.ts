@@ -2,7 +2,9 @@ import type { Browser, Page } from 'playwright';
 import * as cheerio from 'cheerio';
 import type { Element } from 'domhandler';
 import type { RawListing, Source, SourceResult } from '../types.js';
-import { diagnosePage, dumpPage, launchBrowser, newContext } from '../util/browser.js';
+import { dumpPage, launchBrowser } from '../util/browser.js';
+import { parcourirPages } from '../util/parcours.js';
+import { marquesARetenir } from './marques.js';
 
 /**
  * yachtall.com — source principale.
@@ -26,22 +28,33 @@ import { diagnosePage, dumpPage, launchBrowser, newContext } from '../util/brows
  * C'est exactement ce qui manque à Leboncoin et qui fait tout l'intérêt du
  * projet : le critère « plus de 10 mètres » devient exact.
  *
- * **On ne lit que la première page, et c'est délibéré.** Le `robots.txt` du
- * site interdit explicitement ses URL paginées :
+ * **On ne pagine pas, on élargit.** Le `robots.txt` interdit les URL paginées :
  *
  *   Disallow: /en/boats/selling/*?   # paging or search form sent
  *
  * La pagination passe par des paramètres d'URL, précisément ceux que le site
- * demande aux robots de ne pas parcourir. Toutes les formes de chemin essayées
- * répondent d'ailleurs 403. On s'en tient donc aux quarante-cinq annonces les
- * plus récentes, que le site sert volontiers — ce qui correspond exactement au
- * besoin : une veille quotidienne, dont l'historique s'accumule collecte après
- * collecte.
+ * demande aux robots d'éviter. En revanche les **pages par marque sont des
+ * chemins ordinaires**, que le site sert volontiers et qui visent bien mieux :
+ * `/fr/voiliers/jeanneau` a rendu quinze annonces dont trois dans le budget,
+ * là où la page générale, saturée de yachts hors de prix, n'en donnait qu'une.
+ *
+ * Une contrainte mesurée gouverne le parcours : seule la **première requête
+ * d'une session** aboutit, les suivantes reçoivent un 403, et espacer de douze
+ * secondes n'y change rien. Chaque page est donc chargée dans un contexte
+ * neuf — voir `util/parcours.ts`.
  */
 
 const SOURCE = 'yachtall';
 const BASE = 'https://www.yachtall.com';
 const LISTING_URL = `${BASE}/fr/voiliers`;
+
+/**
+ * Pages de marque parcourues en plus de la page générale.
+ *
+ * Chacune coûte une session neuve et quelques secondes ; vingt suffisent à
+ * couvrir le segment sans transformer la collecte en aspirateur.
+ */
+const MAX_MARQUES = Number(process.env.YA_MAX_MARQUES ?? 12);
 
 /** Tours de défilement : la page charge ses vignettes en différé. */
 const MAX_DEFILEMENTS = Number(process.env.YA_MAX_DEFILEMENTS ?? 20);
@@ -58,40 +71,51 @@ export class YachtallSource implements Source {
 
   async collect(): Promise<SourceResult> {
     const errors: string[] = [];
+    const parId = new Map<string, RawListing>();
     let reachable = false;
+    let cartesTotal = 0;
+    let refus = 0;
+
+    // La page générale d'abord — ce sont les annonces les plus récentes —
+    // puis les marques du segment recherché.
+    const urls = [LISTING_URL, ...marquesARetenir(MAX_MARQUES).map((m) => `${LISTING_URL}/${m}`)];
 
     let browser: Browser | undefined;
     try {
       browser = await launchBrowser();
-      const context = await newContext(browser);
-      const page = await context.newPage();
 
-      const response = await page.goto(LISTING_URL, {
-        waitUntil: 'domcontentloaded',
-        timeout: 60_000,
+      const visites = await parcourirPages(browser, urls, async (page, url) => {
+        await page.waitForTimeout(2000);
+        await accepterCookies(page);
+        await defilerJusquAuBout(page);
+        if (url === LISTING_URL) await dumpPage(page, 'yachtall');
+        return parsePage(await page.content());
       });
-      const statut = response?.status() ?? 0;
-      if (statut >= 400) {
-        errors.push(`HTTP ${statut}`);
-        await diagnosePage(page, 'yachtall-refus');
-        return { source: SOURCE, listings: [], errors, reachable: false };
+
+      for (const visite of visites) {
+        if (visite.statut >= 400 || !visite.resultat) {
+          refus += 1;
+          continue;
+        }
+        reachable = true;
+        cartesTotal += visite.resultat.cardsSeen;
+        for (const listing of visite.resultat.listings) {
+          if (!parId.has(listing.sourceId)) parId.set(listing.sourceId, listing);
+        }
       }
-      reachable = true;
 
-      await page.waitForTimeout(2500);
-      await accepterCookies(page);
-      await defilerJusquAuBout(page);
-      await dumpPage(page, 'yachtall');
+      console.log(
+        `    yachtall : ${visites.length - refus}/${visites.length} pages lues, ` +
+          `${cartesTotal} cartes, ${parId.size} annonces retenues`,
+      );
 
-      const { listings, cardsSeen } = parsePage(await page.content());
-      console.log(`    yachtall : ${cardsSeen} cartes lues, ${listings.length} retenues`);
+      if (!reachable) errors.push('aucune page accessible');
+      else if (refus > 0) console.log(`    yachtall : ${refus} page(s) refusée(s), sans gravité`);
 
-      if (cardsSeen === 0) await diagnosePage(page, 'yachtall');
-
-      return { source: SOURCE, listings, errors, reachable };
+      return { source: SOURCE, listings: [...parId.values()], errors, reachable };
     } catch (error) {
       errors.push(`échec général : ${message(error)}`);
-      return { source: SOURCE, listings: [], errors, reachable };
+      return { source: SOURCE, listings: [...parId.values()], errors, reachable };
     } finally {
       await browser?.close().catch(() => undefined);
     }
