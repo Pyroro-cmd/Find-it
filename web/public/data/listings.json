@@ -1,9 +1,9 @@
 {
  "version": 1,
- "generatedAt": "2026-08-13T18:42:07.501Z",
+ "generatedAt": "2026-08-13T19:02:05.897Z",
  "run": {
-  "startedAt": "2026-08-13T18:41:47.377Z",
-  "finishedAt": "2026-08-13T18:42:07.501Z",
+  "startedAt": "2026-08-13T19:01:45.544Z",
+  "finishedAt": "2026-08-13T19:02:05.897Z",
   "status": "success",
   "trigger": "manual",
   "stats": {
@@ -15,8 +15,8 @@
    "fromLlm": 0,
    "unresolved": 0,
    "llmCalled": 0,
-   "inserted": 1,
-   "updated": 1,
+   "inserted": 0,
+   "updated": 2,
    "priceDrops": 0,
    "gone": 0,
    "pruned": 0,
@@ -89,7 +89,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-13T18:42:07.501Z",
+   "lastSeenAt": "2026-08-13T19:02:05.897Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -181,20 +181,20 @@
    "isProject": false,
    "projectReason": null,
    "sellerType": "pro",
-   "score": 35,
+   "score": 30,
    "scoreBreakdown": {
     "rapport_taille_prix": 0,
     "note_prix": "prix non communiqué",
     "longueur": 16,
     "fiabilite_longueur": 10,
     "qualite_annonce": 6,
-    "bonus": 8,
+    "bonus": 3,
     "penalites": -5,
-    "total": 35
+    "total": 30
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T18:42:07.501Z",
-   "lastSeenAt": "2026-08-13T18:42:07.501Z",
+   "lastSeenAt": "2026-08-13T19:02:05.897Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
