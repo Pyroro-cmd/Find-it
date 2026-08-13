@@ -71,6 +71,14 @@ export type Criteria = {
   excludeProjects: boolean;
   excludeProSellers: boolean;
   includeUnknownLength: boolean;
+  /**
+   * Remonte Leboncoin et Facebook en tête, à score égal ou presque.
+   *
+   * Ce sont des annonces de particuliers, en France, dont le prix se négocie —
+   * autrement dit celles qu'on veut voir en premier. Les sites de courtiers
+   * européens restent utiles mais viennent après.
+   */
+  prioriserFrance: boolean;
 };
 
 export type Tab = 'nouveautes' | 'ideales' | 'toutes' | 'baisses' | 'a-verifier' | 'favoris';
@@ -78,6 +86,8 @@ export type Tab = 'nouveautes' | 'ideales' | 'toutes' | 'baisses' | 'a-verifier'
 /** Annonce augmentée des informations dérivées des critères courants. */
 export type DecoratedListing = Listing & {
   matchesCriteria: boolean;
+  /** Rang d'affichage : plus il est élevé, plus l'annonce remonte. */
+  priorite: number;
   isIdeal: boolean;
   needsReview: boolean;
   isNewToday: boolean;

@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { ListingCard } from '@/components/ListingCard';
 import { Tabs } from '@/components/Tabs';
 import {
+  comparerPourAffichage,
   DEFAULT_CRITERIA,
   decorate,
   loadCriteria,
@@ -43,7 +44,7 @@ export default function DashboardPage() {
       listings
         .filter((l) => !hidden.has(l.id))
         .map((l) => decorate(l, criteria, favorites))
-        .sort((a, b) => b.score - a.score),
+        .sort(comparerPourAffichage),
     [listings, criteria, favorites, hidden],
   );
 

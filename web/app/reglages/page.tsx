@@ -162,6 +162,12 @@ export default function SettingsPage() {
                 onChange={(v) => set({ excludeProSellers: v })}
               />
               <Toggle
+                label="Mettre Leboncoin et Facebook en tête"
+                hint="Des particuliers, en France, dont le prix se négocie. Ces annonces n'arrivent que par la collecte lancée depuis votre machine."
+                checked={criteria.prioriserFrance}
+                onChange={(v) => set({ prioriserFrance: v })}
+              />
+              <Toggle
                 label="Garder les annonces dont la longueur reste inconnue"
                 hint="Recommandé : elles arrivent dans l'onglet « À vérifier » plutôt que d'être perdues."
                 checked={criteria.includeUnknownLength}

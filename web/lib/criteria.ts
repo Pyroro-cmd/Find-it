@@ -25,6 +25,7 @@ export const DEFAULT_CRITERIA: Criteria = {
   excludeProjects: true,
   excludeProSellers: false,
   includeUnknownLength: true,
+  prioriserFrance: true,
 };
 
 const CRITERIA_KEY = 'findit.criteria.v1';
@@ -129,6 +130,7 @@ export function decorate(
   return {
     ...listing,
     matchesCriteria,
+    priorite: criteria.prioriserFrance ? prioriteSource(listing.source) : 0,
     isIdeal,
     needsReview: listing.lengthM == null || (listing.lengthConfidence ?? 0) < 0.5,
     isNewToday: now - Date.parse(listing.firstSeenAt) < 24 * 3600 * 1000,
@@ -137,6 +139,38 @@ export function decorate(
     priceDropPct,
     isFavorite: favorites.has(listing.id),
   };
+}
+
+/**
+ * Rang d'une source dans l'affichage.
+ *
+ * Leboncoin et Facebook d'abord : ce sont des particuliers, en France, dont le
+ * prix se négocie et qu'on peut aller voir le week-end. Les courtiers européens
+ * proposent des bateaux mieux documentés mais plus chers et souvent loin — utile
+ * en complément, pas en premier.
+ */
+export function prioriteSource(source: string): number {
+  switch (source) {
+    case 'leboncoin':
+      return 3;
+    case 'facebook':
+      return 2;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Ordre d'affichage : la priorité de source d'abord, le score ensuite.
+ *
+ * Le score reste une mesure d'affaire — rapport taille/prix, baisse, qualité de
+ * l'annonce — et n'est pas gonflé artificiellement pour les sources préférées :
+ * mélanger les deux rendrait la note illisible. C'est le tri qui porte la
+ * préférence, pas la note.
+ */
+export function comparerPourAffichage(a: DecoratedListing, b: DecoratedListing): number {
+  if (a.priorite !== b.priorite) return b.priorite - a.priorite;
+  return b.score - a.score;
 }
 
 export function selectForTab(listings: DecoratedListing[], tab: Tab): DecoratedListing[] {

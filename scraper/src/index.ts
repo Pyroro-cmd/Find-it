@@ -35,14 +35,19 @@ async function main(): Promise<void> {
   const dataset = await loadDataset();
   console.log(`Historique chargé : ${dataset.listings.length} annonces connues\n`);
 
-  // Ordre volontaire : les sources qui fournissent des caractéristiques
-  // exactes d'abord, celles qui exigent de la déduction ensuite.
+  // Leboncoin et Facebook d'abord : ce sont les annonces recherchées en
+  // priorité — des particuliers, en France, dont le prix se négocie. Elles ne
+  // répondent qu'à une collecte lancée depuis une connexion résidentielle ;
+  // quand elles sont désactivées, la boucle passe simplement à la suivante.
+  //
+  // Les viennent ensuite les sites qui annoncent leurs caractéristiques en
+  // clair, donc sans déduction.
   const sources: Source[] = [
+    new LeboncoinSource(),
+    new FacebookSource(),
     new YachtallSource(),
     new Boat24Source(),
     new TheYachtMarketSource(),
-    new LeboncoinSource(),
-    new FacebookSource(),
   ];
 
   const results: SourceResult[] = [];
