@@ -214,11 +214,23 @@ jobs:
           echo "Site publié : https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
 
       - name: Vérifier que le site répond
-        # Publier n'est pas servir : si GitHub Pages n'a jamais été activé sur
-        # le dépôt, la branche existe mais l'adresse renvoie 404. Le workflow
-        # n'a pas le droit d'activer Pages ; il peut au moins le dire.
+        # Publier n'est pas servir. Cette étape distingue les deux causes
+        # possibles d'une adresse muette — Pages jamais activé, ou activé sur
+        # la mauvaise source — au lieu de laisser chercher.
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
+          # Le jeton ne peut pas activer Pages, mais il peut lire sa
+          # configuration : c'est ce qui transforme un 404 en diagnostic.
+          CONFIG=$(curl -s -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" || echo '')
+          SOURCE=$(echo "$CONFIG" | grep -o '"build_type"[^,]*' || true)
+          BRANCHE=$(echo "$CONFIG" | grep -o '"branch"[^,]*' || true)
+          echo "Configuration Pages : ${SOURCE:-absente} ${BRANCHE:-}"
+
           for tentative in 1 2 3 4 5 6; do
             CODE=$(curl -s -o /dev/null -w '%{http_code}' -L "$URL" || echo 000)
             echo "Tentative ${tentative} : HTTP ${CODE} sur ${URL}"
@@ -228,4 +240,9 @@ jobs:
             fi
             sleep 20
           done
-          echo "::warning::${URL} ne répond pas encore. Si c'est la première publication, activez GitHub Pages : Settings → Pages → Source « Deploy from a branch » → branche « gh-pages » / dossier « / (root) »."
+
+          if echo "$CONFIG" | grep -q '"status"'; then
+            echo "::warning::Pages est activé mais ${URL} ne répond pas. Vérifiez que la source est « Deploy from a branch » sur « gh-pages » / « / (root) » : avec la source « GitHub Actions », la branche publiée n'est pas servie."
+          else
+            echo "::warning::GitHub Pages n'est pas activé sur ce dépôt — c'est pourquoi ${URL} renvoie 404. Settings → Pages → Source « Deploy from a branch » → branche « gh-pages » / dossier « / (root) »."
+          fi
