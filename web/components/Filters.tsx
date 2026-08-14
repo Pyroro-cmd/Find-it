@@ -4,6 +4,7 @@ import { sourceLabel } from '@/lib/format';
 
 export type ViewFilters = {
   search: string;
+  facade: string;
   country: string;
   source: string;
   maxPrice: string;
@@ -12,6 +13,7 @@ export type ViewFilters = {
 
 export const EMPTY_FILTERS: ViewFilters = {
   search: '',
+  facade: '',
   country: '',
   source: '',
   maxPrice: '',
@@ -46,6 +48,20 @@ export function Filters({
           placeholder="Sun Odyssey, ketch…"
           className="w-44 rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         />
+      </Field>
+
+      <Field label="Façade">
+        <select
+          value={values.facade}
+          onChange={(e) => set({ facade: e.target.value })}
+          className="rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
+        >
+          <option value="">Toutes</option>
+          <option value="ouest">Côte ouest (Atlantique + Manche)</option>
+          <option value="atlantique">Atlantique</option>
+          <option value="manche">Manche / Nord</option>
+          <option value="mediterranee">Méditerranée</option>
+        </select>
       </Field>
 
       <Field label="Pays">

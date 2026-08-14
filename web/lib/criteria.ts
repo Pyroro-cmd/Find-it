@@ -137,7 +137,9 @@ export function decorate(
     ...listing,
     matchesCriteria,
     priorite: criteria.prioriserFrance
-      ? prioriteSource(listing.source) + prioritePays(listing.country)
+      ? prioriteSource(listing.source) +
+        prioritePays(listing.country) +
+        prioriteFacade(listing.facade)
       : 0,
     isIdeal,
     needsReview: listing.lengthM == null || (listing.lengthConfidence ?? 0) < 0.5,
@@ -170,7 +172,19 @@ export function prioriteSource(source: string): number {
 
 /** À source égale, un bateau en France passe devant un bateau à l'étranger. */
 export function prioritePays(pays: string | null): number {
-  return pays === 'France' ? 1 : 0;
+  return pays === 'France' ? 2 : 0;
+}
+
+/**
+ * La côte ouest — Atlantique et Manche — devant la Méditerranée.
+ *
+ * C'est là qu'on cherche, donc c'est ce qu'on veut voir en premier. Rien n'est
+ * écarté pour autant : un bateau à Martigues reste consultable, il descend
+ * simplement dans la liste. Une annonce dont la façade est indéterminée ne perd
+ * rien non plus — elle se classe comme la Méditerranée, pas en dessous.
+ */
+export function prioriteFacade(facade: string | null): number {
+  return facade === 'atlantique' || facade === 'manche' ? 1 : 0;
 }
 
 /**

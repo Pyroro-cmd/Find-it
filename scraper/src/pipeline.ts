@@ -4,6 +4,7 @@ import { extractLength } from './enrich/length.js';
 import { enrichWithLlm, isLlmEnabled, type LlmExtraction, type LlmInput } from './enrich/llm.js';
 import { computeScore } from './enrich/score.js';
 import { departmentFromPostalCode, facadeFromDepartment, normalize } from './util/text.js';
+import { facadeDepuisLieu } from './util/facade.js';
 import type { StoredListing } from './store.js';
 
 /**
@@ -146,7 +147,9 @@ export async function enrichAll(
         listing.sellerType ??
         detectSellerType(`${listing.title} ${listing.description ?? ''}`),
       department,
-      facade: facadeFromDepartment(department),
+      // Le code postal d'abord quand il existe — c'est le plus sûr —, sinon le
+      // nom du lieu, seule indication fournie par les sites européens.
+      facade: facadeFromDepartment(department) ?? facadeDepuisLieu(listing.locationLabel),
       country: known.country ?? null,
       lengthM,
       lengthSource,

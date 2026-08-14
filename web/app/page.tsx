@@ -75,6 +75,11 @@ export default function DashboardPage() {
           (l.description ?? '').toLowerCase().includes(needle),
       );
     }
+    if (filters.facade === 'ouest') {
+      result = result.filter((l) => l.facade === 'atlantique' || l.facade === 'manche');
+    } else if (filters.facade) {
+      result = result.filter((l) => l.facade === filters.facade);
+    }
     if (filters.country) result = result.filter((l) => l.country === filters.country);
     if (filters.source) result = result.filter((l) => l.source === filters.source);
     if (filters.maxPrice) {
