@@ -143,3 +143,34 @@ test('la description est tronquée pour contenir la taille du fichier', () => {
   mergeListings(dataset, [listing({ description: 'x'.repeat(5000) })], ['leboncoin']);
   assert.ok((dataset.listings[0].description?.length ?? 0) <= 601);
 });
+
+test('une annonce conservée retrouve sa façade quand sa source est injoignable', () => {
+  // Cas réel : le matin où la reconnaissance des façades est arrivée, yachtall
+  // n'a pas répondu. Ses annonces ont été conservées — c'est voulu —, mais avec
+  // l'enrichissement de la veille, donc sans façade. Un bateau de Lorient
+  // restait invisible au filtre « côte ouest ».
+  const dataset = emptyDataset();
+  mergeListings(
+    dataset,
+    [listing({ source: 'yachtall', sourceId: 'y1', locationLabel: 'France, Lorient' })],
+    ['yachtall'],
+  );
+  dataset.listings[0].facade = null; // enrichissement d'avant la façade
+
+  // yachtall ne répond pas : rien de frais, sa source n'est pas joignable.
+  mergeListings(dataset, [], []);
+
+  assert.equal(dataset.listings[0].status, 'active');
+  assert.equal(dataset.listings[0].facade, 'atlantique');
+});
+
+test('une façade déjà connue n’est pas recalculée', () => {
+  const dataset = emptyDataset();
+  mergeListings(
+    dataset,
+    [listing({ locationLabel: 'La Rochelle (17)', facade: 'atlantique' })],
+    ['leboncoin'],
+  );
+  // Le code postal fait autorité sur le nom de lieu : on ne le contredit pas.
+  assert.equal(dataset.listings[0].facade, 'atlantique');
+});

@@ -401,8 +401,10 @@ fait ensuite dans le navigateur.
   dans le navigateur. Vos favoris sur téléphone et sur ordinateur sont
   distincts.
 - **La façade maritime est déduite d'un nom de lieu.** Les sources ne donnent
-  pas de code postal : elles écrivent « France » Bretagne » Morbihan » ou
-  « France, Lorient ». Une liste de régions, de départements et de ports couvre
+  presque jamais de code postal : elles écrivent « France » Bretagne »
+  Morbihan » ou « France, Lorient ». Quand un code postal français traîne dans
+  le libellé, il fait autorité ; sinon, une liste de régions, de départements et
+  de ports couvre
   les endroits où l'on trouve réellement des voiliers à ce budget ; un lieu
   inconnu de la liste reste **sans façade** plutôt que rangé au hasard. Il
   s'affiche normalement, il ne remonte simplement pas en priorité — et le filtre

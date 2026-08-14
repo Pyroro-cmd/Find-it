@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { EnrichedListing } from './types.js';
+import { facadeDepuisLieu } from './util/facade.js';
 
 /**
  * Stockage des annonces dans un fichier JSON versionné par Git.
@@ -229,7 +230,28 @@ export function mergeListings(
   }
 
   dataset.listings = [...byId.values()].sort((a, b) => b.score - a.score);
+  rafraichirFacades(dataset.listings);
   return outcome;
+}
+
+/**
+ * Recalcule la façade de toutes les annonces, revues ou non.
+ *
+ * Une source injoignable un matin voit ses annonces conservées telles quelles —
+ * c'est voulu, elles ne sont pas perdues. Mais elles conservent alors aussi
+ * l'enrichissement du jour où elles ont été lues : le matin où la reconnaissance
+ * des façades est arrivée, yachtall n'a pas répondu, et ses annonces sont
+ * restées sans façade — invisibles au filtre « côte ouest » alors que Lorient
+ * était écrit dessus.
+ *
+ * La façade se déduit du seul libellé de lieu, déjà stocké : la recalculer ne
+ * coûte rien et n'attend pas que la source redevienne joignable.
+ */
+function rafraichirFacades(listings: StoredListing[]): void {
+  for (const listing of listings) {
+    if (listing.facade) continue;
+    listing.facade = facadeDepuisLieu(listing.locationLabel);
+  }
 }
 
 export async function saveDataset(dataset: Dataset, run: RunReport): Promise<void> {

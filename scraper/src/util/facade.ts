@@ -1,4 +1,4 @@
-import { normalize } from './text.js';
+import { departmentFromPostalCode, facadeFromDepartment, normalize } from './text.js';
 
 /**
  * Déduit la façade maritime d'un lieu écrit en toutes lettres.
@@ -150,12 +150,49 @@ const MEDITERRANEE = [
  */
 export function facadeDepuisLieu(lieu: string | null): Facade | null {
   if (!lieu) return null;
-  const texte = aplatir(lieu);
+  const texte = retirerFauxAmis(aplatir(lieu));
+
+  // Un code postal français, quand il y en a un, tranche mieux que n'importe
+  // quel nom de port.
+  const parCode = facadeParCodePostal(texte);
+  if (parCode) return parCode;
 
   if (contient(texte, MEDITERRANEE)) return 'mediterranee';
   if (contient(texte, ATLANTIQUE)) return 'atlantique';
   if (contient(texte, MANCHE)) return 'manche';
   return null;
+}
+
+/**
+ * Neutralise les noms de pays qui contiennent un nom de région française.
+ *
+ * « Grande Bretagne, Largs » — un port écossais — était rangé sur l'Atlantique
+ * français, parce que « Bretagne » y figure comme mot entier. La règle des mots
+ * entiers ne suffit donc pas : il faut retirer le piège avant de chercher.
+ */
+function retirerFauxAmis(texte: string): string {
+  return texte.replace(/\bgrande bretagne\b/g, ' ');
+}
+
+/**
+ * Façade déduite d'un code postal français à cinq chiffres présent dans le
+ * libellé — « France, 56190 Arzal » vaut le Morbihan, donc l'Atlantique.
+ *
+ * La lecture est réservée aux lieux qui se disent français : l'Allemagne et
+ * l'Espagne écrivent aussi leurs codes sur cinq chiffres, et « 18055 Rostock »
+ * deviendrait sans cela un département du Cher.
+ */
+function facadeParCodePostal(texte: string): Facade | null {
+  if (!/\bfrance\b/.test(texte)) return null;
+  const code = texte.match(/\b(\d{5})\b/);
+  if (!code) return null;
+  const facade = facadeFromDepartment(departmentFromPostalCode(code[1]));
+  // Un département sans littoral rend « interieur » ; on préfère alors laisser
+  // la recherche par nom continuer — le nombre lu n'était peut-être pas un code
+  // postal, et un port cité juste après vaut mieux qu'un classement hâtif.
+  return facade === 'atlantique' || facade === 'manche' || facade === 'mediterranee'
+    ? facade
+    : null;
 }
 
 /**
