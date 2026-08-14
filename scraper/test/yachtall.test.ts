@@ -205,3 +205,12 @@ test('une année approximative reste lisible', () => {
   assert.equal(parseCardText('Voilier construit: avant 1985 Prix: € 7 500').yearBuilt, 1985);
   assert.equal(parseCardText('Voilier construit: env. 1990 Prix: € 9 000').yearBuilt, 1990);
 });
+
+test('une année nue collée au pays est retirée', () => {
+  // Relevé en production : « Allemagne 1975 » et « Pays-Bas 1982 » se sont
+  // retrouvés tels quels dans le filtre par pays du site.
+  const fields = parseCardText(
+    'Voilier / yacht à voile 9,50 x 3,00 m Lieu: Allemagne 1975 Prix: € 8 000',
+  );
+  assert.equal(fields.country, 'Allemagne');
+});

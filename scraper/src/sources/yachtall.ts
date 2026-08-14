@@ -321,10 +321,17 @@ export function parseCardText(brut: string): YachtallFields {
   };
 }
 
-/** Retire la ponctuation de bord et les mentions d'année accrochées au lieu. */
+/**
+ * Retire la ponctuation de bord et les mentions d'année accrochées au lieu.
+ *
+ * Deux formes rencontrées sur des cartes réelles : « Pays-Bas avant 1985 » et,
+ * plus discrète, « Allemagne 1975 » — une année nue, sans mot pour l'annoncer.
+ * Aucun pays ne se termine par quatre chiffres, la règle est donc sans risque.
+ */
 function nettoyer(valeur: string): string {
   return valeur
     .replace(/\s*(?:avant|env\.?|ca\.?)\s*\d{4}.*$/i, '')
+    .replace(/\s+(?:19|20)\d{2}\s*$/, '')
     .replace(/[,;/\s]+$/, '')
     .trim();
 }

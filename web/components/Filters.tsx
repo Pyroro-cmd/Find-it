@@ -70,9 +70,9 @@ export function Filters({
           className="rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm outline-none focus:border-accent"
         >
           <option value="">Toutes</option>
-          {sources.map((source) => (
-            <option key={source} value={source}>
-              {sourceLabel(source)}
+          {sourcesAffichees(sources).map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
             </option>
           ))}
         </select>
@@ -111,6 +111,27 @@ export function Filters({
       </button>
     </div>
   );
+}
+
+/**
+ * Sources proposées : celles présentes dans les annonces, plus Leboncoin et
+ * Facebook même quand elles n'ont encore rien rapporté.
+ *
+ * Les voir absentes laissait croire à une panne, alors qu'elles attendent
+ * simplement une collecte lancée depuis votre machine — les serveurs de GitHub
+ * n'y ont pas accès. La mention le dit plutôt que de laisser deviner.
+ */
+export function sourcesAffichees(presentes: string[]): Array<{ value: string; label: string }> {
+  const locales = ['leboncoin', 'facebook'];
+  const toutes = [...new Set([...locales, ...presentes])];
+
+  return toutes.map((source) => ({
+    value: source,
+    label:
+      locales.includes(source) && !presentes.includes(source)
+        ? `${sourceLabel(source)} — collecte locale`
+        : sourceLabel(source),
+  }));
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

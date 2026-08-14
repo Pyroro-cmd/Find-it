@@ -21,14 +21,20 @@ export const DEFAULT_CRITERIA: Criteria = {
   minYearBuilt: null,
   maxYearBuilt: null,
   allowedHullTypes: ['monocoque', 'catamaran', 'trimaran'],
-  allowedCountries: null,
+  // La France par défaut : les sites collectés sont européens et remontaient
+  // des bateaux à Stockholm ou en Estonie, qu'on ne va pas visiter un samedi.
+  // Les autres pays restent à un clic dans « Mes critères ».
+  allowedCountries: ['France'],
   excludeProjects: true,
   excludeProSellers: false,
   includeUnknownLength: true,
   prioriserFrance: true,
 };
 
-const CRITERIA_KEY = 'findit.criteria.v1';
+// La version du jour est passée à v2 en même temps que le passage à « France
+// par défaut » : sans ce changement de clé, les réglages déjà enregistrés dans
+// un navigateur auraient continué d'afficher toute l'Europe.
+const CRITERIA_KEY = 'findit.criteria.v2';
 const FAVORITES_KEY = 'findit.favorites.v1';
 const HIDDEN_KEY = 'findit.hidden.v1';
 
@@ -130,7 +136,9 @@ export function decorate(
   return {
     ...listing,
     matchesCriteria,
-    priorite: criteria.prioriserFrance ? prioriteSource(listing.source) : 0,
+    priorite: criteria.prioriserFrance
+      ? prioriteSource(listing.source) + prioritePays(listing.country)
+      : 0,
     isIdeal,
     needsReview: listing.lengthM == null || (listing.lengthConfidence ?? 0) < 0.5,
     isNewToday: now - Date.parse(listing.firstSeenAt) < 24 * 3600 * 1000,
@@ -152,12 +160,17 @@ export function decorate(
 export function prioriteSource(source: string): number {
   switch (source) {
     case 'leboncoin':
-      return 3;
+      return 30;
     case 'facebook':
-      return 2;
+      return 20;
     default:
       return 0;
   }
+}
+
+/** À source égale, un bateau en France passe devant un bateau à l'étranger. */
+export function prioritePays(pays: string | null): number {
+  return pays === 'France' ? 1 : 0;
 }
 
 /**
