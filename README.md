@@ -98,6 +98,10 @@ favoris, sans vous gêner.
   les épaves.
 - **Filtre selon vos critères**, modifiables depuis le site et appliqués
   instantanément — le filtrage se fait dans le navigateur, pas à la collecte.
+- **Met la France en tête**, puis la côte ouest : à note égale, une annonce
+  française passe devant une annonce allemande, et un bateau de Lorient devant
+  un bateau de Toulon. Rien n'est masqué pour autant — un filtre « Façade »
+  permet de ne garder que l'Atlantique et la Manche.
 - **Ajoute Leboncoin et Facebook sur demande**, via une collecte lancée depuis
   votre machine : voir « Collecte locale » plus bas.
 
@@ -272,6 +276,31 @@ Rien ne remplace la collecte automatique de 8 h : les deux alimentent le même
 fichier et l'historique se cumule. Lancez la collecte locale quand vous y
 pensez — les annonces françaises viendront s'ajouter aux européennes.
 
+### Ne plus y penser
+
+Y penser tous les jours est la seule vraie faiblesse de ce mode. Une commande
+la supprime :
+
+```bash
+npm run planifier            # tous les matins à 8 h
+npm run planifier -- --off   # retire la tâche
+```
+
+Cela installe une tâche `launchd` — le planificateur de macOS —
+(`~/Library/LaunchAgents/com.findit.collecte.plist`) qui lance
+`collecte:locale` à 8 h. Si le Mac dort à cette heure-là, la collecte part au
+réveil plutôt que d'être sautée. Le déroulé est écrit dans
+`scraper/collecte.log`, à relire en cas de doute. `FINDIT_HEURE=7 npm run
+planifier` change l'heure.
+
+Le Mac doit être allumé et connecté ; c'est la contrepartie d'une collecte qui
+part de chez vous. En échange, **vos identifiants ne quittent jamais votre
+ordinateur** : ni le dépôt, ni GitHub, ni cette conversation n'en voient la
+couleur.
+
+Sous Linux, la commande affiche la ligne de `crontab` équivalente plutôt que
+d'installer quoi que ce soit.
+
 ### Facebook Marketplace — lisez ceci avant
 
 > **N'utilisez jamais votre compte principal.** Automatiser une navigation
@@ -303,7 +332,7 @@ Connexions actives) et supprimez le fichier.
 cd scraper
 npm install
 npx playwright install chromium
-npm test              # 50 tests, aucun réseau requis
+npm test              # 64 tests, aucun réseau requis
 npm run typecheck
 npm run scrape        # collecte réelle, écrit le fichier de données
 
@@ -371,5 +400,12 @@ fait ensuite dans le navigateur.
 - **Favoris et critères ne se synchronisent pas entre appareils** — ils vivent
   dans le navigateur. Vos favoris sur téléphone et sur ordinateur sont
   distincts.
+- **La façade maritime est déduite d'un nom de lieu.** Les sources ne donnent
+  pas de code postal : elles écrivent « France » Bretagne » Morbihan » ou
+  « France, Lorient ». Une liste de régions, de départements et de ports couvre
+  les endroits où l'on trouve réellement des voiliers à ce budget ; un lieu
+  inconnu de la liste reste **sans façade** plutôt que rangé au hasard. Il
+  s'affiche normalement, il ne remonte simplement pas en priorité — et le filtre
+  « Côte ouest » le laisse de côté.
 - **Pas de notification par e-mail.** C'est l'ajout le plus simple à faire
   ensuite (le workflow peut envoyer un courriel quand un coup de cœur apparaît).
