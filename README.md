@@ -276,6 +276,10 @@ Rien ne remplace la collecte automatique de 8 h : les deux alimentent le même
 fichier et l'historique se cumule. Lancez la collecte locale quand vous y
 pensez — les annonces françaises viendront s'ajouter aux européennes.
 
+Pour confier ce mode à quelqu'un d'autre — une deuxième personne qui collecte
+depuis sa propre connexion, sur le même site —, tout est réuni dans
+[GUIDE-COUSIN.md](GUIDE-COUSIN.md).
+
 ### Ne plus y penser
 
 Y penser tous les jours est la seule vraie faiblesse de ce mode. Une commande
