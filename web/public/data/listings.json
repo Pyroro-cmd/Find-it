@@ -1,26 +1,26 @@
 {
  "version": 1,
- "generatedAt": "2026-08-22T06:27:35.170Z",
+ "generatedAt": "2026-08-23T06:29:07.820Z",
  "run": {
-  "startedAt": "2026-08-22T06:20:54.801Z",
-  "finishedAt": "2026-08-22T06:27:35.170Z",
+  "startedAt": "2026-08-23T06:22:27.331Z",
+  "finishedAt": "2026-08-23T06:29:07.820Z",
   "status": "success",
   "trigger": "schedule",
   "stats": {
-   "total": 96,
-   "withLength": 45,
-   "fromSourceField": 43,
+   "total": 97,
+   "withLength": 46,
+   "fromSourceField": 44,
    "fromRegex": 0,
    "fromModelTable": 2,
    "fromLlm": 0,
    "unresolved": 3,
    "llmCalled": 0,
-   "inserted": 7,
-   "updated": 41,
+   "inserted": 1,
+   "updated": 48,
    "priceDrops": 0,
-   "gone": 12,
+   "gone": 11,
    "pruned": 0,
-   "collected": 48
+   "collected": 49
   },
   "sources": {
    "leboncoin": {
@@ -30,16 +30,16 @@
     "skipped": true
    },
    "yachtall": {
-    "count": 22,
+    "count": 21,
     "errors": [],
     "reachable": true,
-    "seconds": 249
+    "seconds": 251
    },
    "boat24": {
-    "count": 26,
+    "count": 28,
     "errors": [],
     "reachable": true,
-    "seconds": 152
+    "seconds": 149
    },
    "theyachtmarket": {
     "skipped": true
@@ -133,10 +133,10 @@
     "bonus": 5,
     "total": 63
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -231,10 +231,10 @@
     "bonus": 5,
     "total": 59
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -285,7 +285,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -430,7 +430,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -530,7 +530,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -582,7 +582,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -634,7 +634,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -694,55 +694,6 @@
    ]
   },
   {
-   "id": "boat24:726696",
-   "source": "boat24",
-   "sourceId": "726696",
-   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-101/detail/726696/",
-   "title": "Dehler Optima 101",
-   "description": "Yacht à voile. 1/11retoursuivantFavoriYacht à voileDehler Optima 101prêt à prendre la mer10,10 x 3,40 mDimensions 1 x 27 cv / 20 kWPuissance du moteur1985Année de fabricationAllemagne » Elbe » Stade14 000 €Bateau d'occasionAnnée de fabrication 1985Afficher l'offre",
-   "images": [],
-   "priceEur": 14000,
-   "locationLabel": "Allemagne » Elbe » Stade",
-   "department": null,
-   "facade": null,
-   "country": "Allemagne",
-   "lengthM": 10.1,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1985,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 55,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 29,
-    "prix_au_metre": 1386,
-    "longueur": 7,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 55
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-21T06:33:39.891Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 14000,
-     "at": "2026-08-21T06:33:39.891Z"
-    }
-   ]
-  },
-  {
    "id": "boat24:667863",
    "source": "boat24",
    "sourceId": "667863",
@@ -780,7 +731,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-20T06:32:02.188Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -928,7 +879,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -976,7 +927,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1035,6 +986,54 @@
    ]
   },
   {
+   "id": "boat24:726696",
+   "source": "boat24",
+   "sourceId": "726696",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-101/detail/726696/",
+   "title": "Dehler Optima 101",
+   "description": "Yacht à voile. 1/11retoursuivantFavoriYacht à voileDehler Optima 101prêt à prendre la mer10,10 x 3,40 mDimensions 1 x 27 cv / 20 kWPuissance du moteur1985Année de fabricationAllemagne » Elbe » Stade14 000 €Bateau d'occasionAnnée de fabrication 1985Afficher l'offre",
+   "images": [],
+   "priceEur": 14000,
+   "locationLabel": "Allemagne » Elbe » Stade",
+   "department": null,
+   "facade": null,
+   "country": "Allemagne",
+   "lengthM": 10.1,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1985,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 50,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 29,
+    "prix_au_metre": 1386,
+    "longueur": 7,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 50
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-21T06:33:39.891Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 14000,
+     "at": "2026-08-21T06:33:39.891Z"
+    }
+   ]
+  },
+  {
    "id": "boat24:732151",
    "source": "boat24",
    "sourceId": "732151",
@@ -1085,59 +1084,6 @@
     {
      "price": 9060,
      "at": "2026-08-14T00:16:19.419Z"
-    }
-   ]
-  },
-  {
-   "id": "yachtall:313565",
-   "source": "yachtall",
-   "sourceId": "313565",
-   "url": "https://www.yachtall.com/fr/bateau/dufour-dufor-35-s313565",
-   "title": "Dufour Dufor 35",
-   "description": "Dufour Dufor 35 Dufour Dufor 35 Voilier / sloop: Dufour, bateau d'occasion, polyester Longueur x largeur: 10,70 m x 3,48 m, 10,70 x 3,48 m construit: 1980, cabines: 2 Moteur: Vetus Diesel M 4.15, 33 cv (24 kW), diesel € 30 000 Lieu: Allemagne, Ostsee / Maasholm 1980 Société: Online-Broker Prix: € 30 000, TVA incluse",
-   "images": [
-    "https://image.yachtall.com/image/sboat/0/313/565/l74nfvt1i5.jpg",
-    "https://static.yachtall.com/image/layout/icon/request.gif",
-    "https://static.yachtall.com/image/layout/star-empty.png"
-   ],
-   "priceEur": 30000,
-   "locationLabel": "Allemagne, Ostsee / Maasholm",
-   "department": null,
-   "facade": null,
-   "country": "Allemagne",
-   "lengthM": 10.7,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1980,
-   "material": "polyester",
-   "engineType": "inboard",
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": "pro",
-   "score": 49,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 14,
-    "prix_au_metre": 2804,
-    "longueur": 11,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 6,
-    "bonus": 8,
-    "total": 49
-   },
-   "status": "active",
-   "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 30000,
-     "at": "2026-08-22T06:27:35.162Z"
     }
    ]
   },
@@ -1227,7 +1173,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1277,10 +1223,10 @@
     "qualite_annonce": 4,
     "total": 47
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:50:54.172Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1378,10 +1324,10 @@
     "bonus": 5,
     "total": 46
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1481,7 +1427,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1532,10 +1478,10 @@
     "bonus": 3,
     "total": 45
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1581,14 +1527,67 @@
     "bonus": 5,
     "total": 45
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
      "price": 13500,
+     "at": "2026-08-22T06:27:35.162Z"
+    }
+   ]
+  },
+  {
+   "id": "yachtall:313565",
+   "source": "yachtall",
+   "sourceId": "313565",
+   "url": "https://www.yachtall.com/fr/bateau/dufour-dufor-35-s313565",
+   "title": "Dufour Dufor 35",
+   "description": "Dufour Dufor 35 Dufour Dufor 35 Voilier / sloop: Dufour, bateau d'occasion, polyester Longueur x largeur: 10,70 m x 3,48 m, 10,70 x 3,48 m construit: 1980, cabines: 2 Moteur: Vetus Diesel M 4.15, 33 cv (24 kW), diesel € 30 000 Lieu: Allemagne, Ostsee / Maasholm 1980 Société: Online-Broker Prix: € 30 000, TVA incluse",
+   "images": [
+    "https://image.yachtall.com/image/sboat/0/313/565/l74nfvt1i5.jpg",
+    "https://static.yachtall.com/image/layout/icon/request.gif",
+    "https://static.yachtall.com/image/layout/star-empty.png"
+   ],
+   "priceEur": 30000,
+   "locationLabel": "Allemagne, Ostsee / Maasholm",
+   "department": null,
+   "facade": null,
+   "country": "Allemagne",
+   "lengthM": 10.7,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1980,
+   "material": "polyester",
+   "engineType": "inboard",
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": "pro",
+   "score": 44,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 14,
+    "prix_au_metre": 2804,
+    "longueur": 11,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 6,
+    "bonus": 3,
+    "total": 44
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 30000,
      "at": "2026-08-22T06:27:35.162Z"
     }
    ]
@@ -1629,10 +1628,10 @@
     "qualite_annonce": 4,
     "total": 44
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-20T06:32:02.188Z",
-   "goneAt": "2026-08-21T06:33:39.891Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1684,62 +1683,13 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
      "price": 29900,
      "at": "2026-08-13T19:40:11.127Z"
-    }
-   ]
-  },
-  {
-   "id": "boat24:734572",
-   "source": "boat24",
-   "sourceId": "734572",
-   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-98-gs/detail/734572/",
-   "title": "Dehler Optima 98 GS",
-   "description": "Yacht à voile. 1/40retoursuivantFavoriQuillard, Voilier classique, Yacht à voileDehler Optima 98 GS9,80 x 3,00 mDimensions 1 x 23 cv / 17 kWPuissance du moteur1982Année de fabricationDanemark » Mer Baltique » Augustenborg19 500 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
-   "images": [],
-   "priceEur": 19500,
-   "locationLabel": "Danemark » Mer Baltique » Augustenborg",
-   "department": null,
-   "facade": null,
-   "country": "Danemark",
-   "lengthM": 9.8,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1982,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 44,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 20,
-    "prix_au_metre": 1990,
-    "longueur": 5,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 44
-   },
-   "status": "active",
-   "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 19500,
-     "at": "2026-08-22T06:27:35.162Z"
     }
    ]
   },
@@ -1827,10 +1777,10 @@
     "qualite_annonce": 4,
     "total": 42
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-18T06:30:19.703Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1877,7 +1827,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1933,7 +1883,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2033,7 +1983,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2085,7 +2035,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2131,10 +2081,10 @@
     "qualite_annonce": 4,
     "total": 40
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-13T19:50:54.172Z",
-   "goneAt": "2026-08-14T00:16:19.419Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2238,6 +2188,54 @@
     {
      "price": 28000,
      "at": "2026-08-18T06:30:19.703Z"
+    }
+   ]
+  },
+  {
+   "id": "boat24:734572",
+   "source": "boat24",
+   "sourceId": "734572",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-98-gs/detail/734572/",
+   "title": "Dehler Optima 98 GS",
+   "description": "Yacht à voile. 1/40retoursuivantFavoriQuillard, Voilier classique, Yacht à voileDehler Optima 98 GS9,80 x 3,00 mDimensions 1 x 23 cv / 17 kWPuissance du moteur1982Année de fabricationDanemark » Mer Baltique » Augustenborg19 500 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
+   "images": [],
+   "priceEur": 19500,
+   "locationLabel": "Danemark » Mer Baltique » Augustenborg",
+   "department": null,
+   "facade": null,
+   "country": "Danemark",
+   "lengthM": 9.8,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1982,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 39,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 20,
+    "prix_au_metre": 1990,
+    "longueur": 5,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 39
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 19500,
+     "at": "2026-08-22T06:27:35.162Z"
     }
    ]
   },
@@ -2376,7 +2374,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2424,13 +2422,62 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
      "price": 13700,
      "at": "2026-08-13T19:40:11.127Z"
+    }
+   ]
+  },
+  {
+   "id": "boat24:690187",
+   "source": "boat24",
+   "sourceId": "690187",
+   "url": "https://www.boat24.com/fr/voiliers/beneteau/beneteau-first-32s5/detail/690187/",
+   "title": "Beneteau FIRST 32S5",
+   "description": "Yacht à voile. 1/15retoursuivantFavoriYacht à voileBeneteau FIRST 32S59,90 x 3,30 mDimensions1990Année de fabricationFrance » Lorient30 000 €Bateau d'occasionAnnée de fabrication 1990Afficher l'offre",
+   "images": [],
+   "priceEur": 30000,
+   "locationLabel": "France » Lorient",
+   "department": null,
+   "facade": "atlantique",
+   "country": "France",
+   "lengthM": 9.9,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1990,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 37,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 13,
+    "prix_au_metre": 3030,
+    "longueur": 6,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 3,
+    "bonus": 5,
+    "total": 37
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 30000,
+     "at": "2026-08-23T06:29:07.815Z"
     }
    ]
   },
@@ -2472,7 +2519,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2615,10 +2662,10 @@
     "qualite_annonce": 4,
     "total": 35
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-17T06:37:44.894Z",
-   "goneAt": "2026-08-18T06:30:19.703Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2713,7 +2760,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2827,7 +2874,7 @@
    "sourceId": "313263",
    "url": "https://www.yachtall.com/fr/bateau/jeanneau-sun-odyssey-490-s313263",
    "title": "Jeanneau Sun Odyssey 490",
-   "description": "Jeanneau Sun Odyssey 490 Jeanneau Sun Odyssey 490 Voilier / sloop: Jeanneau, bateau neuf Longueur x largeur: 14,42 m x 4,49 m, 14,42 x 4,49 m construit: 2026, cabines: 3 Moteur: Yanmar 4JH3-DTE, 57 cv (42 kW), diesel £ 331 144 Lieu: France, Les Herbiers 2026 Société: Band of Boats Prix: £ 331 144 (≈ € 386 287), HT",
+   "description": "Jeanneau Sun Odyssey 490 Jeanneau Sun Odyssey 490 Voilier / sloop: Jeanneau, bateau neuf Longueur x largeur: 14,42 m x 4,49 m, 14,42 x 4,49 m construit: 2026, cabines: 3 Moteur: Yanmar 4JH3-DTE, 57 cv (42 kW), diesel £ 331 144 Lieu: France, Les Herbiers 2026 Société: Band of Boats Prix: £ 331 144 (≈ € 386 535), HT",
    "images": [
     "https://image.yachtall.com/image/sboat/0/313/263/ix0wqb2wak.jpg",
     "https://static.yachtall.com/image/layout/icon/request.gif",
@@ -2865,7 +2912,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-21T06:33:39.891Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -2876,7 +2923,7 @@
    "sourceId": "312846",
    "url": "https://www.yachtall.com/fr/bateau/bavaria-vision-44-s312846",
    "title": "Bavaria Vision 44",
-   "description": "Bavaria Vision 44 Bavaria Vision 44 Voilier / daycruiser/daysailer: Bavaria, bateau d'occasion, polyester Longueur x largeur: 13,70 m x 4,39 m, 13,70 x 4,39 m construit: 2010, cabines: 3 Moteur: Volvo Penta, 55 cv (40 kW), diesel kr 2 150 000 Lieu: Suède, Stockholm 2010 Société: Navark Yachtbrokers Prix: kr 2 150 000 (≈ € 193 913), TVA incluse",
+   "description": "Bavaria Vision 44 Bavaria Vision 44 Voilier / daycruiser/daysailer: Bavaria, bateau d'occasion, polyester Longueur x largeur: 13,70 m x 4,39 m, 13,70 x 4,39 m construit: 2010, cabines: 3 Moteur: Volvo Penta, 55 cv (40 kW), diesel kr 2 150 000 Lieu: Suède, Stockholm 2010 Société: Navark Yachtbrokers Prix: kr 2 150 000 (≈ € 194 351), TVA incluse",
    "images": [
     "https://image.yachtall.com/image/sboat/0/312/846/6qj3m878um.jpg",
     "https://static.yachtall.com/image/layout/icon/request.gif",
@@ -2914,7 +2961,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -2955,10 +3002,10 @@
     "qualite_annonce": 4,
     "total": 34
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-13T19:50:54.172Z",
-   "goneAt": "2026-08-14T00:16:19.419Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3013,60 +3060,6 @@
    "priceHistory": []
   },
   {
-   "id": "boat24:733986",
-   "source": "boat24",
-   "sourceId": "733986",
-   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-31/detail/733986/",
-   "title": "Dehler 31",
-   "description": "Yacht à voile. 1/32retoursuivantFavoriYacht à voileDehler 31Dehler 31 Top 1991, superbe9,40 x 3,40 mDimensions 1 x 18 cv / 13 kWPuissance du moteur1991Année de fabricationPays-Bas » Noord-Holland » Hoorn28 500 €Bateau d'occasionAnnée de fabrication 1991Afficher l'offre",
-   "images": [],
-   "priceEur": 28500,
-   "locationLabel": "Pays-Bas » Noord-Holland » Hoorn",
-   "department": null,
-   "facade": null,
-   "country": "Pays-Bas",
-   "lengthM": 9.4,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1991,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 33,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 13,
-    "prix_au_metre": 3032,
-    "longueur": 3,
-    "baisse_de_prix": 3,
-    "baisse_pct": 3,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "total": 33
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-20T06:32:02.188Z",
-   "goneAt": "2026-08-21T06:33:39.891Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 29500,
-     "at": "2026-08-14T00:16:19.419Z"
-    },
-    {
-     "price": 28500,
-     "at": "2026-08-20T06:32:02.188Z"
-    }
-   ]
-  },
-  {
    "id": "yachtall:312577",
    "source": "yachtall",
    "sourceId": "312577",
@@ -3109,7 +3102,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3125,7 +3118,7 @@
    "sourceId": "312550",
    "url": "https://www.yachtall.com/fr/bateau/bavaria-37-s312550",
    "title": "Bavaria 37",
-   "description": "Bavaria 37 Bavaria 37 Voilier / daycruiser/daysailer: Bavaria, bateau d'occasion, polyester Longueur x largeur: 11,55 m x 3,68 m, 11,55 x 3,68 m construit: 2000, cabines: 3 Moteur: Volvo Penta MD2030, 29 cv (21 kW), diesel kr 749 000 Lieu: Suède, Västervik 2000 Société: Navark Yachtbrokers Prix: kr 749 000 (≈ € 67 554), TVA incluse",
+   "description": "Bavaria 37 Bavaria 37 Voilier / daycruiser/daysailer: Bavaria, bateau d'occasion, polyester Longueur x largeur: 11,55 m x 3,68 m, 11,55 x 3,68 m construit: 2000, cabines: 3 Moteur: Volvo Penta MD2030, 29 cv (21 kW), diesel kr 749 000 Lieu: Suède, Västervik 2000 Société: Navark Yachtbrokers Prix: kr 749 000 (≈ € 67 707), TVA incluse",
    "images": [
     "https://image.yachtall.com/image/sboat/0/312/550/14j0s35jqw.jpg",
     "https://static.yachtall.com/image/layout/icon/request.gif",
@@ -3163,10 +3156,62 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
+  },
+  {
+   "id": "boat24:733986",
+   "source": "boat24",
+   "sourceId": "733986",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-31/detail/733986/",
+   "title": "Dehler 31",
+   "description": "Yacht à voile. 1/32retoursuivantFavoriYacht à voileDehler 31Dehler 31 Top 1991, superbe9,40 x 3,40 mDimensions 1 x 18 cv / 13 kWPuissance du moteur1991Année de fabricationPays-Bas » Noord-Holland » Hoorn28 500 €Bateau d'occasionAnnée de fabrication 1991Afficher l'offre",
+   "images": [],
+   "priceEur": 28500,
+   "locationLabel": "Pays-Bas » Noord-Holland » Hoorn",
+   "department": null,
+   "facade": null,
+   "country": "Pays-Bas",
+   "lengthM": 9.4,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1991,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 30,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 13,
+    "prix_au_metre": 3032,
+    "longueur": 3,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 30
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-14T00:16:19.419Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 29500,
+     "at": "2026-08-14T00:16:19.419Z"
+    },
+    {
+     "price": 28500,
+     "at": "2026-08-20T06:32:02.188Z"
+    }
+   ]
   },
   {
    "id": "boat24:724072",
@@ -3204,10 +3249,10 @@
     "qualite_annonce": 4,
     "total": 30
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3252,10 +3297,10 @@
     "qualite_annonce": 4,
     "total": 30
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-20T06:32:02.188Z",
-   "goneAt": "2026-08-21T06:33:39.891Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3362,59 +3407,10 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T18:42:07.501Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
-  },
-  {
-   "id": "boat24:689430",
-   "source": "boat24",
-   "sourceId": "689430",
-   "url": "https://www.boat24.com/fr/voiliers/beneteau/beneteau-first-28/detail/689430/",
-   "title": "Beneteau First 28",
-   "description": "1/14retoursuivantFavoriYacht hauturierBeneteau First 288,60 x 3,00 mDimensions 1 x 14 cv / 10 kWPuissance du moteur1982Année de fabricationFrance » Marseille30 000 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
-   "images": [],
-   "priceEur": 30000,
-   "locationLabel": "France » Marseille",
-   "department": null,
-   "facade": "mediterranee",
-   "country": "France",
-   "lengthM": 8.6,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1982,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 30,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 11,
-    "prix_au_metre": 3488,
-    "longueur": 0,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 30
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-16T06:28:04.781Z",
-   "lastSeenAt": "2026-08-16T06:28:04.781Z",
-   "goneAt": "2026-08-17T06:37:44.894Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 30000,
-     "at": "2026-08-16T06:28:04.781Z"
-    }
-   ]
   },
   {
    "id": "boat24:722677",
@@ -3454,7 +3450,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3602,7 +3598,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3696,10 +3692,10 @@
     "qualite_annonce": 4,
     "total": 27
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3744,10 +3740,10 @@
     "qualite_annonce": 4,
     "total": 27
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3792,10 +3788,10 @@
     "qualite_annonce": 4,
     "total": 27
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3846,7 +3842,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-20T06:32:02.188Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3892,10 +3888,10 @@
     "qualite_annonce": 4,
     "total": 26
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-20T06:32:02.188Z",
-   "goneAt": "2026-08-21T06:33:39.891Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3942,7 +3938,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3953,12 +3949,60 @@
    ]
   },
   {
+   "id": "boat24:689430",
+   "source": "boat24",
+   "sourceId": "689430",
+   "url": "https://www.boat24.com/fr/voiliers/beneteau/beneteau-first-28/detail/689430/",
+   "title": "Beneteau First 28",
+   "description": "1/14retoursuivantFavoriYacht hauturierBeneteau First 288,60 x 3,00 mDimensions 1 x 14 cv / 10 kWPuissance du moteur1982Année de fabricationFrance » Marseille30 000 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
+   "images": [],
+   "priceEur": 30000,
+   "locationLabel": "France » Marseille",
+   "department": null,
+   "facade": "mediterranee",
+   "country": "France",
+   "lengthM": 8.6,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1982,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 25,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 11,
+    "prix_au_metre": 3488,
+    "longueur": 0,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 25
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-16T06:28:04.781Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 30000,
+     "at": "2026-08-16T06:28:04.781Z"
+    }
+   ]
+  },
+  {
    "id": "yachtall:312486",
    "source": "yachtall",
    "sourceId": "312486",
    "url": "https://www.yachtall.com/fr/bateau/bavaria-32-cruiser-s312486",
    "title": "Bavaria 32 Cruiser",
-   "description": "Bavaria 32 Cruiser Bavaria 32 Cruiser Voilier / daycruiser/daysailer: Bavaria, bateau d'occasion, polyester Longueur x largeur: 10,30 m x 3,35 m, 10,30 x 3,35 m construit: 2003, cabines: 2 Moteur: Volvo Penta MD, 19 cv (14 kW), diesel kr 575 000 Lieu: Suède, Höganäs 2003 Société: Navark Yachtbrokers Prix: kr 575 000 (≈ € 51 861), TVA incluse",
+   "description": "Bavaria 32 Cruiser Bavaria 32 Cruiser Voilier / daycruiser/daysailer: Bavaria, bateau d'occasion, polyester Longueur x largeur: 10,30 m x 3,35 m, 10,30 x 3,35 m construit: 2003, cabines: 2 Moteur: Volvo Penta MD, 19 cv (14 kW), diesel kr 575 000 Lieu: Suède, Höganäs 2003 Société: Navark Yachtbrokers Prix: kr 575 000 (≈ € 51 978), TVA incluse",
    "images": [
     "https://image.yachtall.com/image/sboat/0/312/486/cv8ife8e9f.jpg",
     "https://static.yachtall.com/image/layout/icon/request.gif",
@@ -3996,7 +4040,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4007,7 +4051,7 @@
    "sourceId": "313036",
    "url": "https://www.yachtall.com/fr/bateau/beneteau-first-32s5-s313036",
    "title": "Bénéteau First 32s5",
-   "description": "Bénéteau First 32s5 Bénéteau First 32s5 Voilier / yacht à voile: Bénéteau, bateau d'occasion, polyester Longueur x largeur: 9,90 m x 3,30 m, 9,90 x 3,30 m construit: 1990, cabines: 2 Moteur: Volvo Penta D1 20, 18 cv (13 kW), diesel £ 26 500 Lieu: Grande Bretagne, Ardrossan 1990 Société: Sunbird International Yacht... Prix: £ 26 500 (≈ € 30 913), TVA incluse",
+   "description": "Bénéteau First 32s5 Bénéteau First 32s5 Voilier / yacht à voile: Bénéteau, bateau d'occasion, polyester Longueur x largeur: 9,90 m x 3,30 m, 9,90 x 3,30 m construit: 1990, cabines: 2 Moteur: Volvo Penta D1 20, 18 cv (13 kW), diesel £ 26 500 Lieu: Grande Bretagne, Ardrossan 1990 Société: Sunbird International Yacht... Prix: £ 26 500 (≈ € 30 933), TVA incluse",
    "images": [
     "https://image.yachtall.com/image/sboat/0/313/036/irmh2ho7yf.jpg",
     "https://static.yachtall.com/image/layout/icon/request.gif",
@@ -4045,7 +4089,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4056,7 +4100,7 @@
    "sourceId": "312851",
    "url": "https://www.yachtall.com/fr/bateau/beneteau-oceanis-34-s312851",
    "title": "Bénéteau Oceanis 34",
-   "description": "Bénéteau Oceanis 34 Bénéteau Oceanis 34 Voilier / sloop: Bénéteau, bateau d'occasion, polyester Longueur x largeur: 9,75 m x 3,66 m, 9,75 x 3,66 m construit: 2015 Moteur: Yanmar 3YM30, 29 cv (21 kW), diesel £ 67 500 Lieu: Grande Bretagne, Largs 2015 Société: Band of Boats Prix: £ 67 500 (≈ € 78 741), TVA incluse",
+   "description": "Bénéteau Oceanis 34 Bénéteau Oceanis 34 Voilier / sloop: Bénéteau, bateau d'occasion, polyester Longueur x largeur: 9,75 m x 3,66 m, 9,75 x 3,66 m construit: 2015 Moteur: Yanmar 3YM30, 29 cv (21 kW), diesel £ 67 500 Lieu: Grande Bretagne, Largs 2015 Société: Band of Boats Prix: £ 67 500 (≈ € 78 791), TVA incluse",
    "images": [
     "https://image.yachtall.com/image/sboat/0/312/851/e783czycln.jpg",
     "https://static.yachtall.com/image/layout/icon/request.gif",
@@ -4094,7 +4138,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4138,7 +4182,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4225,10 +4269,10 @@
     "penalites": -5,
     "total": 15
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-18T06:30:19.703Z",
    "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": null,
+   "goneAt": "2026-08-23T06:29:07.815Z",
    "publishedAt": null,
    "priceHistory": []
   },
@@ -4308,18 +4352,18 @@
    "isProject": false,
    "projectReason": null,
    "sellerType": "pro",
-   "score": 14,
+   "score": 9,
    "scoreBreakdown": {
     "rapport_taille_prix": 0,
     "note_prix": "longueur inconnue",
     "fiabilite_longueur": 0,
     "qualite_annonce": 6,
-    "bonus": 8,
-    "total": 14
+    "bonus": 3,
+    "total": 9
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4366,10 +4410,10 @@
     "penalites": -5,
     "total": 9
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
   },
@@ -4415,7 +4459,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4610,7 +4654,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-23T06:29:07.815Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
