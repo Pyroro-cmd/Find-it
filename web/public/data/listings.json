@@ -1,26 +1,26 @@
 {
  "version": 1,
- "generatedAt": "2026-08-23T06:29:07.820Z",
+ "generatedAt": "2026-08-24T06:41:35.810Z",
  "run": {
-  "startedAt": "2026-08-23T06:22:27.331Z",
-  "finishedAt": "2026-08-23T06:29:07.820Z",
+  "startedAt": "2026-08-24T06:34:56.844Z",
+  "finishedAt": "2026-08-24T06:41:35.810Z",
   "status": "success",
   "trigger": "schedule",
   "stats": {
-   "total": 97,
-   "withLength": 46,
-   "fromSourceField": 44,
+   "total": 98,
+   "withLength": 42,
+   "fromSourceField": 40,
    "fromRegex": 0,
    "fromModelTable": 2,
    "fromLlm": 0,
    "unresolved": 3,
    "llmCalled": 0,
    "inserted": 1,
-   "updated": 48,
+   "updated": 44,
    "priceDrops": 0,
    "gone": 11,
    "pruned": 0,
-   "collected": 49
+   "collected": 45
   },
   "sources": {
    "leboncoin": {
@@ -30,16 +30,16 @@
     "skipped": true
    },
    "yachtall": {
-    "count": 21,
+    "count": 19,
     "errors": [],
     "reachable": true,
-    "seconds": 251
+    "seconds": 246
    },
    "boat24": {
-    "count": 28,
+    "count": 26,
     "errors": [],
     "reachable": true,
-    "seconds": 149
+    "seconds": 153
    },
    "theyachtmarket": {
     "skipped": true
@@ -285,7 +285,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -430,7 +430,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -480,10 +480,10 @@
     "qualite_annonce": 4,
     "total": 56
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -528,10 +528,10 @@
     "qualite_annonce": 4,
     "total": 56
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -582,7 +582,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -634,7 +634,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -729,10 +729,10 @@
     "qualite_annonce": 4,
     "total": 54
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-20T06:32:02.188Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -829,10 +829,10 @@
     "qualite_annonce": 3,
     "total": 53
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-17T06:37:44.894Z",
-   "goneAt": "2026-08-18T06:30:19.703Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -879,7 +879,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -927,7 +927,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1021,10 +1021,10 @@
     "qualite_annonce": 4,
     "total": 50
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-21T06:33:39.891Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1173,7 +1173,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1223,10 +1223,10 @@
     "qualite_annonce": 4,
     "total": 47
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-13T19:50:54.172Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1284,55 +1284,6 @@
     {
      "price": 18000,
      "at": "2026-08-15T06:25:54.954Z"
-    }
-   ]
-  },
-  {
-   "id": "boat24:712364",
-   "source": "boat24",
-   "sourceId": "712364",
-   "url": "https://www.boat24.com/fr/voiliers/beneteau/beneteau-first-35-gte/detail/712364/",
-   "title": "Beneteau First 35 GTE",
-   "description": "Yacht à voile. 1/32retoursuivantFavoriYacht hauturier, Yacht à voileBeneteau First 35 GTE10,77 x 3,69 mDimensions 1 x 15 cv / 11 kWPuissance du moteur1982Année de fabricationFrance » Martigues28 000 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
-   "images": [],
-   "priceEur": 28000,
-   "locationLabel": "France » Martigues",
-   "department": null,
-   "facade": "mediterranee",
-   "country": "France",
-   "lengthM": 10.77,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1982,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 46,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 15,
-    "prix_au_metre": 2600,
-    "longueur": 12,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 46
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-22T06:27:35.162Z",
-   "goneAt": "2026-08-23T06:29:07.815Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 28000,
-     "at": "2026-08-22T06:27:35.162Z"
     }
    ]
   },
@@ -1425,10 +1376,10 @@
     "bonus": 3,
     "total": 45
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1582,7 +1533,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1630,7 +1581,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1683,7 +1634,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1827,7 +1778,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1883,7 +1834,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1942,6 +1893,54 @@
    ]
   },
   {
+   "id": "boat24:712364",
+   "source": "boat24",
+   "sourceId": "712364",
+   "url": "https://www.boat24.com/fr/voiliers/beneteau/beneteau-first-35-gte/detail/712364/",
+   "title": "Beneteau First 35 GTE",
+   "description": "Yacht à voile. 1/32retoursuivantFavoriYacht hauturier, Yacht à voileBeneteau First 35 GTE10,77 x 3,69 mDimensions 1 x 15 cv / 11 kWPuissance du moteur1982Année de fabricationFrance » Martigues28 000 €Bateau d'occasionAnnée de fabrication 1982Afficher l'offre",
+   "images": [],
+   "priceEur": 28000,
+   "locationLabel": "France » Martigues",
+   "department": null,
+   "facade": "mediterranee",
+   "country": "France",
+   "lengthM": 10.77,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1982,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 41,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 15,
+    "prix_au_metre": 2600,
+    "longueur": 12,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 41
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 28000,
+     "at": "2026-08-22T06:27:35.162Z"
+    }
+   ]
+  },
+  {
    "id": "yachtall:291337",
    "source": "yachtall",
    "sourceId": "291337",
@@ -1983,7 +1982,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2035,7 +2034,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2081,10 +2080,10 @@
     "qualite_annonce": 4,
     "total": 40
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2229,7 +2228,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2275,10 +2274,10 @@
     "qualite_annonce": 4,
     "total": 39
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2374,7 +2373,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2422,7 +2421,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2469,15 +2468,64 @@
     "bonus": 5,
     "total": 37
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-23T06:29:07.815Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
      "price": 30000,
      "at": "2026-08-23T06:29:07.815Z"
+    }
+   ]
+  },
+  {
+   "id": "boat24:737626",
+   "source": "boat24",
+   "sourceId": "737626",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-31/detail/737626/",
+   "title": "Dehler 31",
+   "description": "Yacht à voile. 1/19retoursuivantFavoriYacht à voileDehler 319,40 x 3,05 mDimensions 1 x 18 cv / 13 kWPuissance du moteur1988Année de fabricationAllemagne » Mer Baltique » Heiligenhafen24 900 €Bateau d'occasionAnnée de fabrication 1988Afficher l'offre",
+   "images": [],
+   "priceEur": 24900,
+   "locationLabel": "Allemagne » Mer Baltique » Heiligenhafen",
+   "department": null,
+   "facade": null,
+   "country": "Allemagne",
+   "lengthM": 9.4,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1988,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 37,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 15,
+    "prix_au_metre": 2649,
+    "longueur": 3,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "bonus": 5,
+    "total": 37
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 24900,
+     "at": "2026-08-24T06:41:35.807Z"
     }
    ]
   },
@@ -2519,7 +2567,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2662,10 +2710,10 @@
     "qualite_annonce": 4,
     "total": 35
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2760,7 +2808,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2912,7 +2960,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-21T06:33:39.891Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -2961,7 +3009,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3004,7 +3052,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3102,7 +3150,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3156,7 +3204,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3199,7 +3247,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3249,10 +3297,10 @@
     "qualite_annonce": 4,
     "total": 30
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3299,7 +3347,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3407,7 +3455,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T18:42:07.501Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3450,7 +3498,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3540,10 +3588,10 @@
     "qualite_annonce": 4,
     "total": 29
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
-   "lastSeenAt": "2026-08-18T06:30:19.703Z",
-   "goneAt": "2026-08-20T06:32:02.188Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3598,7 +3646,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3842,7 +3890,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-20T06:32:02.188Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3890,7 +3938,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3938,7 +3986,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3984,10 +4032,10 @@
     "qualite_annonce": 4,
     "total": 25
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -4040,7 +4088,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4087,10 +4135,10 @@
     "penalites": -5,
     "total": 20
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": []
   },
@@ -4138,7 +4186,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4182,7 +4230,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4363,7 +4411,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4410,10 +4458,10 @@
     "penalites": -5,
     "total": 9
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
    "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": null,
+   "goneAt": "2026-08-24T06:41:35.807Z",
    "publishedAt": null,
    "priceHistory": []
   },
@@ -4459,7 +4507,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4654,7 +4702,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
+   "lastSeenAt": "2026-08-24T06:41:35.807Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
