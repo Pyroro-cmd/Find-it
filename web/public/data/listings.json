@@ -1,26 +1,26 @@
 {
  "version": 1,
- "generatedAt": "2026-08-24T06:41:35.810Z",
+ "generatedAt": "2026-08-25T06:32:38.123Z",
  "run": {
-  "startedAt": "2026-08-24T06:34:56.844Z",
-  "finishedAt": "2026-08-24T06:41:35.810Z",
+  "startedAt": "2026-08-25T06:25:48.644Z",
+  "finishedAt": "2026-08-25T06:32:38.123Z",
   "status": "success",
   "trigger": "schedule",
   "stats": {
-   "total": 98,
-   "withLength": 42,
-   "fromSourceField": 40,
+   "total": 99,
+   "withLength": 40,
+   "fromSourceField": 38,
    "fromRegex": 0,
    "fromModelTable": 2,
    "fromLlm": 0,
-   "unresolved": 3,
+   "unresolved": 4,
    "llmCalled": 0,
    "inserted": 1,
-   "updated": 44,
-   "priceDrops": 0,
-   "gone": 11,
+   "updated": 43,
+   "priceDrops": 1,
+   "gone": 10,
    "pruned": 0,
-   "collected": 45
+   "collected": 44
   },
   "sources": {
    "leboncoin": {
@@ -33,13 +33,13 @@
     "count": 19,
     "errors": [],
     "reachable": true,
-    "seconds": 246
+    "seconds": 250
    },
    "boat24": {
-    "count": 26,
+    "count": 25,
     "errors": [],
     "reachable": true,
-    "seconds": 153
+    "seconds": 160
    },
    "theyachtmarket": {
     "skipped": true
@@ -146,55 +146,6 @@
    ]
   },
   {
-   "id": "boat24:730808",
-   "source": "boat24",
-   "sourceId": "730808",
-   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-delanta-80/detail/730808/",
-   "title": "Dehler Delanta 80",
-   "description": "Yacht à voile. 1/12retoursuivantFavoriYacht à voileDehler Delanta 808,00 x 2,45 mDimensions 1 x 8,0 cv / 5,9 kWPuissance du moteur1978Année de fabricationPays-Bas » Zeeland » Wemeldinge2 700 €Bateau d'occasionAnnée de fabrication 1978Afficher l'offre",
-   "images": [],
-   "priceEur": 2700,
-   "locationLabel": "Pays-Bas » Zeeland » Wemeldinge",
-   "department": null,
-   "facade": null,
-   "country": "Pays-Bas",
-   "lengthM": 8,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1978,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 59,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 40,
-    "prix_au_metre": 338,
-    "longueur": 0,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 59
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-21T06:33:39.891Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 2700,
-     "at": "2026-08-21T06:33:39.891Z"
-    }
-   ]
-  },
-  {
    "id": "boat24:736561",
    "source": "boat24",
    "sourceId": "736561",
@@ -285,7 +236,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -430,7 +381,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -482,7 +433,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -582,7 +533,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -634,7 +585,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -690,6 +641,54 @@
     {
      "price": 532,
      "at": "2026-08-18T06:30:19.703Z"
+    }
+   ]
+  },
+  {
+   "id": "boat24:730808",
+   "source": "boat24",
+   "sourceId": "730808",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-delanta-80/detail/730808/",
+   "title": "Dehler Delanta 80",
+   "description": "Yacht à voile. 1/12retoursuivantFavoriYacht à voileDehler Delanta 808,00 x 2,45 mDimensions 1 x 8,0 cv / 5,9 kWPuissance du moteur1978Année de fabricationPays-Bas » Zeeland » Wemeldinge2 700 €Bateau d'occasionAnnée de fabrication 1978Afficher l'offre",
+   "images": [],
+   "priceEur": 2700,
+   "locationLabel": "Pays-Bas » Zeeland » Wemeldinge",
+   "department": null,
+   "facade": null,
+   "country": "Pays-Bas",
+   "lengthM": 8,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1978,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 54,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 40,
+    "prix_au_metre": 338,
+    "longueur": 0,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 54
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-21T06:33:39.891Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 2700,
+     "at": "2026-08-21T06:33:39.891Z"
     }
    ]
   },
@@ -829,10 +828,10 @@
     "qualite_annonce": 3,
     "total": 53
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -879,7 +878,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -927,7 +926,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1021,10 +1020,10 @@
     "qualite_annonce": 4,
     "total": 50
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-21T06:33:39.891Z",
-   "lastSeenAt": "2026-08-23T06:29:07.815Z",
-   "goneAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1173,7 +1172,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1184,6 +1183,60 @@
     {
      "price": 21000,
      "at": "2026-08-17T06:37:44.894Z"
+    }
+   ]
+  },
+  {
+   "id": "boat24:659937",
+   "source": "boat24",
+   "sourceId": "659937",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-101/detail/659937/",
+   "title": "Dehler Optima 101",
+   "description": "Yacht à voile. 1/11retoursuivantFavoriQuillard, Yacht à voileDehler Optima 101Baisse de prix. Dehler 34 Performance Cruiser10,00 x 3,40 mDimensions 1 x 27 cv / 20 kWPuissance du moteur1987Année de fabricationAllemagne » Baie de Kiel » Kiel23 900 €Bateau d'occasionAnnée de fabrication 1987Afficher l'offre",
+   "images": [],
+   "priceEur": 23900,
+   "locationLabel": "Allemagne » Baie de Kiel » Kiel",
+   "department": null,
+   "facade": null,
+   "country": "Allemagne",
+   "lengthM": 10,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1987,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 48,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 17,
+    "prix_au_metre": 2390,
+    "longueur": 7,
+    "baisse_de_prix": 10,
+    "baisse_pct": 10,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 48
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-13T19:40:11.127Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 26500,
+     "at": "2026-08-13T19:40:11.127Z"
+    },
+    {
+     "price": 23900,
+     "at": "2026-08-25T06:32:38.119Z"
     }
    ]
   },
@@ -1223,10 +1276,10 @@
     "qualite_annonce": 4,
     "total": 47
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:50:54.172Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1275,10 +1328,10 @@
     "qualite_annonce": 4,
     "total": 46
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
-   "lastSeenAt": "2026-08-17T06:37:44.894Z",
-   "goneAt": "2026-08-18T06:30:19.703Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -1533,7 +1586,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1581,7 +1634,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1634,7 +1687,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1778,7 +1831,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1834,7 +1887,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1930,7 +1983,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -1982,7 +2035,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2034,7 +2087,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2191,6 +2244,55 @@
    ]
   },
   {
+   "id": "boat24:736330",
+   "source": "boat24",
+   "sourceId": "736330",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-duetta-94-dehler-31/detail/736330/",
+   "title": "Dehler Duetta 94 / Dehler 31",
+   "description": "Yacht à voile. 1/23retoursuivantFavoriQuillard, Yacht à voileDehler Duetta 94 / Dehler 31quille courte9,40 x 3,05 mDimensions 1 x 18 cv / 13 kWPuissance du moteur1985Année de fabricationPays-Bas » IJsselmeer » Stavoren20 900 €Bateau d'occasionAnnée de fabrication 1985Afficher l'offre",
+   "images": [],
+   "priceEur": 20900,
+   "locationLabel": "Pays-Bas » IJsselmeer » Stavoren",
+   "department": null,
+   "facade": null,
+   "country": "Pays-Bas",
+   "lengthM": 9.4,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1985,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 40,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 18,
+    "prix_au_metre": 2223,
+    "longueur": 3,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "bonus": 5,
+    "total": 40
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-25T06:32:38.119Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 20900,
+     "at": "2026-08-25T06:32:38.119Z"
+    }
+   ]
+  },
+  {
    "id": "boat24:734572",
    "source": "boat24",
    "sourceId": "734572",
@@ -2226,10 +2328,10 @@
     "qualite_annonce": 4,
     "total": 39
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2274,64 +2376,15 @@
     "qualite_annonce": 4,
     "total": 39
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
      "price": 17000,
      "at": "2026-08-16T06:28:04.781Z"
-    }
-   ]
-  },
-  {
-   "id": "boat24:670061",
-   "source": "boat24",
-   "sourceId": "670061",
-   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-delanta-80-ak/detail/670061/",
-   "title": "Dehler Delanta 80 AK",
-   "description": "Daysailer, Quillard, Yacht à voile Avec point d'e. 1/9retoursuivantFavoriRemorque incluseDaysailer, Quillard, Yacht à voileDehler Delanta 80 AKAvec point d'eau, remorque routière, contrôlée (août 2025)8,00 x 2,50 mDimensions 1 x 8,0 cv / 5,9 kWPuissance du moteur1978Année de fabricationSuisse » Lac de Neuchâtel » Chevroux16 000 €Bateau d'occasionAnnée de fabrication 1978Afficher l'offre",
-   "images": [],
-   "priceEur": 16000,
-   "locationLabel": "Suisse » Lac de Neuchâtel » Chevroux",
-   "department": null,
-   "facade": null,
-   "country": "Suisse",
-   "lengthM": 8,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1978,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 39,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 20,
-    "prix_au_metre": 2000,
-    "longueur": 0,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "bonus": 5,
-    "total": 39
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-17T06:37:44.894Z",
-   "goneAt": "2026-08-18T06:30:19.703Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 16000,
-     "at": "2026-08-17T06:37:44.894Z"
     }
    ]
   },
@@ -2373,7 +2426,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2421,7 +2474,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2517,10 +2570,10 @@
     "bonus": 5,
     "total": 37
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-24T06:41:35.807Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -2567,61 +2620,13 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
      "price": 19500,
      "at": "2026-08-14T00:16:19.419Z"
-    }
-   ]
-  },
-  {
-   "id": "boat24:659937",
-   "source": "boat24",
-   "sourceId": "659937",
-   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-101/detail/659937/",
-   "title": "Dehler Optima 101",
-   "description": "Yacht à voile. 1/11retoursuivantFavoriQuillard, Yacht à voileDehler Optima 101C'est maintenant ou jamais !! Dehler 34 Performance Cruiser10,00 x 3,40 mDimensions 1 x 27 cv / 20 kWPuissance du moteur1987Année de fabricationAllemagne » Baie de Kiel » Kiel26 500 €Bateau d'occasionAnnée de fabrication 1987Afficher l'offre",
-   "images": [],
-   "priceEur": 26500,
-   "locationLabel": "Allemagne » Baie de Kiel » Kiel",
-   "department": null,
-   "facade": null,
-   "country": "Allemagne",
-   "lengthM": 10,
-   "lengthSource": "source_field",
-   "lengthConfidence": 0.95,
-   "hullType": "monocoque",
-   "boatKind": "voilier",
-   "yearBuilt": 1987,
-   "material": null,
-   "engineType": null,
-   "draftM": null,
-   "berthIncluded": null,
-   "afloat": null,
-   "isProject": false,
-   "projectReason": null,
-   "sellerType": null,
-   "score": 36,
-   "scoreBreakdown": {
-    "rapport_taille_prix": 15,
-    "prix_au_metre": 2650,
-    "longueur": 7,
-    "fiabilite_longueur": 10,
-    "qualite_annonce": 4,
-    "total": 36
-   },
-   "status": "gone",
-   "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-13T19:50:54.172Z",
-   "goneAt": "2026-08-14T00:16:19.419Z",
-   "publishedAt": null,
-   "priceHistory": [
-    {
-     "price": 26500,
-     "at": "2026-08-13T19:40:11.127Z"
     }
    ]
   },
@@ -2808,7 +2813,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-12T16:44:22.459Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -2917,6 +2922,58 @@
    ]
   },
   {
+   "id": "boat24:670061",
+   "source": "boat24",
+   "sourceId": "670061",
+   "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-delanta-80-ak/detail/670061/",
+   "title": "Dehler Delanta 80 AK",
+   "description": "Daysailer, Quillard, Yacht à voile Avec point d'e. 1/9retoursuivantFavoriRemorque incluseDaysailer, Quillard, Yacht à voileDehler Delanta 80 AKAvec point d'eau, remorque routière, contrôlée (août 2025)8,00 x 2,50 mDimensions 1 x 8,0 cv / 5,9 kWPuissance du moteur1978Année de fabricationSuisse » Lac de Neuchâtel » Chevroux16 100 €Bateau d'occasionAnnée de fabrication 1978Afficher l'offre",
+   "images": [],
+   "priceEur": 16100,
+   "locationLabel": "Suisse » Lac de Neuchâtel » Chevroux",
+   "department": null,
+   "facade": null,
+   "country": "Suisse",
+   "lengthM": 8,
+   "lengthSource": "source_field",
+   "lengthConfidence": 0.95,
+   "hullType": "monocoque",
+   "boatKind": "voilier",
+   "yearBuilt": 1978,
+   "material": null,
+   "engineType": null,
+   "draftM": null,
+   "berthIncluded": null,
+   "afloat": null,
+   "isProject": false,
+   "projectReason": null,
+   "sellerType": null,
+   "score": 34,
+   "scoreBreakdown": {
+    "rapport_taille_prix": 20,
+    "prix_au_metre": 2013,
+    "longueur": 0,
+    "fiabilite_longueur": 10,
+    "qualite_annonce": 4,
+    "total": 34
+   },
+   "status": "active",
+   "firstSeenAt": "2026-08-17T06:37:44.894Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
+   "publishedAt": null,
+   "priceHistory": [
+    {
+     "price": 16000,
+     "at": "2026-08-17T06:37:44.894Z"
+    },
+    {
+     "price": 16100,
+     "at": "2026-08-25T06:32:38.119Z"
+    }
+   ]
+  },
+  {
    "id": "yachtall:313263",
    "source": "yachtall",
    "sourceId": "313263",
@@ -2960,7 +3017,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-21T06:33:39.891Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3009,7 +3066,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3050,10 +3107,10 @@
     "qualite_annonce": 4,
     "total": 34
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3150,7 +3207,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3204,7 +3261,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3245,10 +3302,10 @@
     "qualite_annonce": 4,
     "total": 30
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3347,7 +3404,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3455,7 +3512,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T18:42:07.501Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -3496,10 +3553,10 @@
     "qualite_annonce": 4,
     "total": 29
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-16T06:28:04.781Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3590,7 +3647,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-15T06:25:54.954Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3646,7 +3703,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3692,10 +3749,10 @@
     "qualite_annonce": 4,
     "total": 28
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-18T06:30:19.703Z",
-   "lastSeenAt": "2026-08-21T06:33:39.891Z",
-   "goneAt": "2026-08-22T06:27:35.162Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3890,7 +3947,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-20T06:32:02.188Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -3936,10 +3993,10 @@
     "qualite_annonce": 4,
     "total": 26
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-17T06:37:44.894Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": [
     {
@@ -3986,7 +4043,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4088,7 +4145,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4186,7 +4243,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
@@ -4228,10 +4285,10 @@
     "penalites": -5,
     "total": 18
    },
-   "status": "active",
+   "status": "gone",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
    "lastSeenAt": "2026-08-24T06:41:35.807Z",
-   "goneAt": null,
+   "goneAt": "2026-08-25T06:32:38.119Z",
    "publishedAt": null,
    "priceHistory": []
   },
@@ -4361,10 +4418,10 @@
     "penalites": -5,
     "total": 14
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-14T00:16:19.419Z",
-   "lastSeenAt": "2026-08-16T06:28:04.781Z",
-   "goneAt": "2026-08-17T06:37:44.894Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": []
   },
@@ -4411,7 +4468,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-22T06:27:35.162Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4507,7 +4564,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4702,7 +4759,7 @@
    },
    "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-24T06:41:35.807Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
    "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
@@ -4812,9 +4869,9 @@
    "sourceId": "731080",
    "url": "https://www.boat24.com/fr/voiliers/dehler/dehler-optima-92/detail/731080/",
    "title": "Dehler Optima 92",
-   "description": "Yacht à voile. 1/2retoursuivantFavoriYacht à voileDehler Optima 92Réparations à effectuer9,20 mDimensions1979Année de fabricationSuisse » Lac Léman » Société Nautique de Genève24 500 €Bateau d'occasionAnnée de fabrication 1979Afficher l'offre",
+   "description": "Yacht à voile. 1/2retoursuivantFavoriYacht à voileDehler Optima 92Réparations à effectuer9,20 mDimensions1979Année de fabricationSuisse » Lac Léman » Société Nautique de Genève24 600 €Bateau d'occasionAnnée de fabrication 1979Afficher l'offre",
    "images": [],
-   "priceEur": 24500,
+   "priceEur": 24600,
    "locationLabel": "Suisse » Lac Léman » Société Nautique de Genève",
    "department": null,
    "facade": null,
@@ -4837,16 +4894,14 @@
    "scoreBreakdown": {
     "rapport_taille_prix": 0,
     "note_prix": "longueur inconnue",
-    "baisse_de_prix": 0,
-    "baisse_pct": 0,
     "fiabilite_longueur": 0,
     "qualite_annonce": 4,
     "total": 4
    },
-   "status": "gone",
+   "status": "active",
    "firstSeenAt": "2026-08-13T19:40:11.127Z",
-   "lastSeenAt": "2026-08-18T06:30:19.703Z",
-   "goneAt": "2026-08-20T06:32:02.188Z",
+   "lastSeenAt": "2026-08-25T06:32:38.119Z",
+   "goneAt": null,
    "publishedAt": null,
    "priceHistory": [
     {
@@ -4856,6 +4911,10 @@
     {
      "price": 24500,
      "at": "2026-08-18T06:30:19.703Z"
+    },
+    {
+     "price": 24600,
+     "at": "2026-08-25T06:32:38.119Z"
     }
    ]
   }
